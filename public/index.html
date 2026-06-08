@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BloomCare 🌸 Women's Health</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rose:#E8608A;--rose-l:#F4AABF;--rose-p:#FDE8EF;
+  --mauve:#C2638F;--plum:#7B3B6E;
+  --mint:#6ECDB5;--amber:#F4A742;--sky:#64B5D9;
+  --text:#3D2040;--muted:#9A7B9E;
+  --card:rgba(255,255,255,.9);--border:rgba(200,150,190,.22);
+  --shadow:0 8px 40px rgba(120,50,100,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:linear-gradient(135deg,#FDE8EF 0%,#F9E6F5 40%,#EDE6FF 100%);min-height:100vh;color:var(--text);}
+
+/* ── Profile overlay ── */
+#p-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--plum),var(--rose));z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+.pbox{background:#fff;border-radius:24px;padding:26px 22px;width:100%;max-width:420px;max-height:92vh;overflow-y:auto;}
+.pbox h2{font-family:'Playfair Display',serif;color:var(--plum);font-size:21px;margin-bottom:3px;}
+.pbox p{font-size:12px;color:var(--muted);margin-bottom:16px;}
+
+/* ── Header ── */
+header{background:linear-gradient(135deg,var(--plum),var(--rose));padding:16px 18px 28px;position:relative;overflow:hidden;}
+header::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:40px;background:linear-gradient(135deg,#FDE8EF,#F9E6F5);border-radius:50% 50% 0 0/100% 100% 0 0;}
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;}
+.hdr-l small{color:rgba(255,255,255,.72);font-size:10.5px;}
+.hdr-l strong{font-family:'Playfair Display',serif;font-size:19px;color:#fff;display:block;margin:1px 0;}
+.hdr-l span{color:rgba(255,255,255,.68);font-size:10.5px;}
+.av{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;}
+
+/* ── Nav ── */
+nav{display:flex;gap:5px;padding:20px 13px 6px;overflow-x:auto;scrollbar-width:none;}
+nav::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;background:var(--card);border:1.5px solid var(--border);border-radius:50px;padding:7px 12px;font-size:11px;font-weight:600;cursor:pointer;color:var(--muted);transition:all .2s;white-space:nowrap;}
+.tab.active{background:linear-gradient(135deg,var(--rose),var(--mauve));color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(232,96,138,.28);}
+
+/* ── Sections ── */
+.sec{display:none;padding:8px 13px 100px;animation:fu .3s ease;}
+.sec.active{display:block;}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── Card ── */
+.card{background:var(--card);backdrop-filter:blur(12px);border-radius:20px;border:1.5px solid var(--border);box-shadow:var(--shadow);padding:17px;margin-bottom:12px;}
+.ct{font-family:'Playfair Display',serif;font-size:16px;color:var(--plum);margin-bottom:11px;display:flex;align-items:center;gap:7px;}
+
+/* ── Forms ── */
+label{font-size:10.5px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.4px;text-transform:uppercase;}
+input,select,textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:11px;font-family:'DM Sans',sans-serif;font-size:13.5px;background:rgba(255,255,255,.7);color:var(--text);margin-bottom:10px;outline:none;transition:border .2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--rose);background:#fff;}
+textarea{resize:vertical;min-height:60px;}
+
+/* ── Buttons ── */
+.btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--rose),var(--mauve));color:#fff;border:none;border-radius:13px;font-size:13.5px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(232,96,138,.25);transition:transform .15s;}
+.btn:active{transform:scale(.97);}
+.btn.sec{background:rgba(232,96,138,.1);color:var(--rose);box-shadow:none;border:1.5px solid var(--rose-l);}
+.btn.mint{background:linear-gradient(135deg,#6ECDB5,#3DADA8);box-shadow:0 4px 14px rgba(110,205,181,.25);}
+.btn.amr{background:linear-gradient(135deg,#F4A742,#E07B2A);box-shadow:0 4px 14px rgba(244,167,66,.25);}
+.btn.sky{background:linear-gradient(135deg,#64B5D9,#3A8FBF);box-shadow:0 4px 14px rgba(100,181,217,.25);}
+.btn.sm{width:auto;padding:8px 14px;font-size:12px;}
+.btn.xs{width:auto;padding:6px 10px;font-size:11px;}
+.mt{margin-top:10px;}
+
+/* ── Alert boxes ── */
+.rb{border-radius:12px;padding:12px 14px;margin-top:9px;font-size:12.5px;line-height:1.6;}
+.rb.danger{background:#FFE8EC;border-left:4px solid var(--rose);color:#7B3B6E;}
+.rb.safe{background:#E6FAF5;border-left:4px solid #6ECDB5;color:#1F6B5E;}
+.rb.info{background:#EEF4FF;border-left:4px solid #64B5D9;color:#1A4A70;}
+.rb.warn{background:#FFF4E0;border-left:4px solid #F4A742;color:#7A4E00;}
+.rb b{display:block;font-size:13.5px;margin-bottom:3px;}
+
+/* ── Utilities ── */
+.row{display:flex;gap:8px;}.row>*{flex:1;}
+.hint{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5;}
+
+/* ── Period calendar ── */
+.cyc{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:8px;}
+.dc{aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;}
+.dc.period{background:#E8608A;color:#fff;}
+.dc.fertile{background:#FFB3C6;color:#7B1D4E;}
+.dc.ovul{background:var(--plum);color:#fff;box-shadow:0 0 0 3px rgba(123,59,110,.22);}
+.dc.safe{background:#D5F5EC;color:#1F6B5E;}
+.dc.norm{background:rgba(200,150,190,.12);color:var(--muted);}
+.dlbl{font-size:8.5px;text-align:center;color:var(--muted);font-weight:700;}
+.leg{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted);}
+.ld{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.today-pill{text-align:center;padding:7px;background:linear-gradient(135deg,#FDE8EF,#f9e0f3);border-radius:50px;font-size:12px;font-weight:600;color:var(--mauve);margin-bottom:9px;}
+
+/* ── Water glasses ── */
+.g-wrap{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:14px 0;}
+.glass{position:relative;width:36px;height:50px;border:2.5px solid rgba(100,181,217,.42);border-top:none;border-radius:0 0 9px 9px;overflow:hidden;background:rgba(100,181,217,.07);cursor:pointer;transition:transform .15s;}
+.glass:hover{transform:scale(1.08);}
+.gfill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(50,150,200,.9),rgba(100,200,225,.65));transition:height .45s ease;}
+.gnum{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:7.5px;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.35);z-index:2;}
+.wbig{text-align:center;padding:8px 0;}
+.wbig strong{font-size:30px;color:var(--sky);font-family:'Playfair Display',serif;}
+.wbig span{font-size:12px;color:var(--muted);display:block;margin-top:2px;}
+
+/* ── Medicine ── */
+.med-item{display:flex;align-items:flex-start;gap:10px;padding:11px;background:rgba(123,59,110,.04);border-radius:12px;margin-bottom:8px;border:1.5px solid var(--border);}
+.med-ico{font-size:22px;flex-shrink:0;margin-top:2px;}
+.med-info{flex:1;min-width:0;}
+.med-name{font-size:13.5px;font-weight:700;color:var(--text);}
+.med-sub{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.5;}
+.tpills{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
+.tpill{background:linear-gradient(135deg,rgba(123,59,110,.1),rgba(232,96,138,.07));color:var(--plum);padding:3px 8px;border-radius:50px;font-size:10.5px;font-weight:700;}
+.mdel{background:none;border:none;color:var(--rose-l);font-size:16px;cursor:pointer;padding:3px;flex-shrink:0;}
+.mdel:hover{color:var(--rose);}
+.badge{display:inline-block;padding:2px 7px;border-radius:50px;font-size:10px;font-weight:700;background:rgba(232,96,138,.12);color:var(--rose);margin-left:5px;}
+
+/* ── Medical chips ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.chip{padding:6px 12px;border-radius:50px;font-size:11.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--card);color:var(--muted);transition:all .2s;}
+.chip.on{background:linear-gradient(135deg,var(--rose),var(--mauve));color:#fff;border-color:transparent;}
+
+/* ── Profile stats ── */
+.pstat{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.55);margin-bottom:7px;border:1.5px solid var(--border);}
+.pico{font-size:20px;}
+.plbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px;}
+.pval{font-size:13.5px;font-weight:600;color:var(--text);}
+
+/* ── Prescription upload ── */
+.upload{border:2px dashed var(--rose-l);border-radius:14px;padding:22px;text-align:center;cursor:pointer;background:rgba(232,96,138,.03);transition:all .2s;}
+.upload:hover{background:var(--rose-p);border-color:var(--rose);}
+.upload input{display:none;}
+
+/* ── Nutrition food search ── */
+.fsw{position:relative;}
+.fsugg{position:absolute;top:100%;left:0;right:0;z-index:200;background:#fff;border:1.5px solid var(--border);border-radius:12px;max-height:200px;overflow-y:auto;box-shadow:var(--shadow);display:none;}
+.fsi{padding:9px 13px;font-size:12.5px;cursor:pointer;border-bottom:1px solid rgba(200,150,190,.1);color:var(--text);}
+.fsi:hover{background:var(--rose-p);}
+.fsi small{display:block;font-size:10px;color:var(--muted);}
+
+/* ── Meal log ── */
+.meal-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border-radius:13px;cursor:pointer;background:linear-gradient(135deg,rgba(232,96,138,.07),rgba(123,59,110,.04));border:1.5px solid var(--border);margin-bottom:5px;}
+.meal-body{display:none;padding:2px 0 8px;}
+.meal-body.open{display:block;}
+.fi{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 10px;border-radius:10px;background:rgba(244,167,66,.07);margin-bottom:4px;border:1px solid rgba(244,167,66,.14);}
+.fi-n{font-size:12.5px;font-weight:600;color:var(--text);}
+.fi-d{font-size:10px;color:var(--muted);}
+.fi-c{font-size:13px;font-weight:700;color:var(--amber);}
+.fidel{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;margin-left:5px;}
+
+/* ── Nutrient bars ── */
+.nbr{margin-bottom:9px;}
+.nbl{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px;}
+.nbg{background:rgba(200,150,190,.15);border-radius:50px;height:7px;}
+.nbf{height:7px;border-radius:50px;transition:width .5s ease;}
+
+/* ── Nutrition total ── */
+.ntot{background:linear-gradient(135deg,var(--plum),var(--rose));border-radius:18px;padding:18px;color:#fff;margin-top:10px;}
+.ntot-title{font-family:'Playfair Display',serif;font-size:16px;margin-bottom:10px;}
+.ntot-main{font-size:32px;font-weight:700;font-family:'Playfair Display',serif;}
+.ntgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px;}
+.nti{background:rgba(255,255,255,.14);border-radius:11px;padding:9px 11px;}
+.nti-val{font-size:15px;font-weight:700;}
+.nti-lbl{font-size:9.5px;opacity:.8;margin-top:1px;}
+
+/* ── AI loader ── */
+.ai-load{display:none;font-size:12.5px;color:var(--muted);padding:12px;text-align:center;}
+.ai-load.show{display:block;}
+.spin{display:inline-block;width:16px;height:16px;border:2.5px solid var(--rose-l);border-top-color:var(--rose);border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── Notif bar ── */
+#notif{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);background:var(--plum);color:#fff;padding:9px 20px;border-radius:50px;font-size:12.5px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.22);display:none;z-index:999;white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+  PROFILE SETUP MODAL (First Launch)
+════════════════════════════════════════ -->
+<div id="p-overlay">
+<div class="pbox">
+  <div style="font-size:36px;margin-bottom:8px">🌸</div>
+  <h2>Welcome to BloomCare</h2>
+  <p>Set up your personal health profile to get started</p>
+
+  <label>Full Name *</label>
+  <input type="text" id="pn" placeholder="Your full name..." />
+
+  <div class="row">
+    <div><label>Age *</label><input type="number" id="pa" placeholder="25" min="10" max="65" /></div>
+    <div><label>Blood Group</label>
+      <select id="pb"><option value="">—</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+    </div>
+  </div>
+  <div class="row">
+    <div><label>Weight (kg) *</label><input type="number" id="pw" placeholder="60" /></div>
+    <div><label>Height (cm) *</label><input type="number" id="ph" placeholder="165" /></div>
+  </div>
+  <label>Pregnancy Status</label>
+  <select id="pp" onchange="N('wkr').style.display=this.value==='yes'?'block':'none'">
+    <option value="no">Not Pregnant</option>
+    <option value="yes">Currently Pregnant</option>
+    <option value="plan">Planning to Conceive</option>
+  </select>
+  <div id="wkr" style="display:none">
+    <label>Weeks Pregnant</label>
+    <input type="number" id="pwk" placeholder="e.g. 16" min="1" max="42" />
+  </div>
+  <button class="btn" onclick="saveProf()" style="margin-top:6px">🌸 Start My Health Journey</button>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════
+  MAIN APP
+════════════════════════════════════════ -->
+<div id="app" style="display:none">
+
+<header>
+  <div class="hdr">
+    <div class="hdr-l">
+      <small id="hdate">Today</small>
+      <strong id="hname">BloomCare 🌸</strong>
+      <span id="hstatus"></span>
+    </div>
+    <div class="av" onclick="editProf()" title="Edit Profile">👤</div>
+  </div>
+</header>
+
+<nav>
+  <div class="tab active" onclick="ST('profile')">👤 Profile</div>
+  <div class="tab" onclick="ST('medical')">🏥 Medical</div>
+  <div class="tab" onclick="ST('period')">🩸 Period</div>
+  <div class="tab" onclick="ST('safe')">💛 Safe Days</div>
+  <div class="tab" onclick="ST('water')">💧 Water</div>
+  <div class="tab" onclick="ST('medicine')">💊 Medicine</div>
+  <div class="tab" onclick="ST('nutrition')">🍽️ Nutrition</div>
+</nav>
+
+<!-- ── 1. PROFILE ── -->
+<div class="sec active" id="profile">
+  <div class="card">
+    <div class="ct">👤 My Health Profile</div>
+    <div id="pview"></div>
+    <button class="btn sec mt" onclick="editProf()">✏️ Edit Profile</button>
+  </div>
+  <div class="card">
+    <div class="ct">📊 BMI Analysis</div>
+    <div id="bmiview"></div>
+  </div>
+</div>
+
+<!-- ── 2. MEDICAL ── -->
+<div class="sec" id="medical">
+  <div class="card">
+    <div class="ct">🏥 Medical Conditions</div>
+    <p class="hint">Tap all conditions that apply to you:</p>
+    <div class="chips" id="cchips">
+      <div class="chip" onclick="this.classList.toggle('on')">✅ None</div>
+      <div class="chip" onclick="this.classList.toggle('on')">🔴 PCOS / PCOD</div>
+      <div class="chip" onclick="this.classList.toggle('on')">🟠 Diabetes</div>
+      <div class="chip" onclick="this.classList.toggle('on')">🟡 Thyroid</div>
+      <div class="chip" onclick="this.classList.toggle('on')">🔵 Hypertension</div>
+      <div class="chip" onclick="this.classList.toggle('on')">🔴 Anemia</div>
+      <div class="chip" onclick="this.classList.toggle('on')">🫁 Asthma</div>
+      <div class="chip" onclick="this.classList.toggle('on')">❤️ Heart Condition</div>
+      <div class="chip" onclick="this.classList.toggle('on')">🫘 Kidney Disease</div>
+      <div class="chip" onclick="this.classList.toggle('on')">🦴 Arthritis</div>
+      <div class="chip" onclick="this.classList.toggle('on')">🧠 Depression / Anxiety</div>
+      <div class="chip" onclick="this.classList.toggle('on')">🌸 Endometriosis</div>
+      <div class="chip" onclick="this.classList.toggle('on')">🔵 Migraine</div>
+    </div>
+    <label>Other Condition (custom)</label>
+    <input type="text" id="ocond" placeholder="Any other condition..." />
+    <button class="btn" onclick="saveCond()">💾 Save Conditions</button>
+    <div id="condsaved"></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">👨‍⚕️ My Doctor</div>
+    <div class="row">
+      <div><label>Doctor's Name</label><input type="text" id="dn" placeholder="Dr. Sharma..." /></div>
+      <div><label>Speciality</label><input type="text" id="ds" placeholder="Gynaecologist..." /></div>
+    </div>
+    <label>Hospital / Clinic Name & Place</label>
+    <input type="text" id="dp" placeholder="e.g. Apollo Hospital, Koramangala, Bengaluru" />
+    <label>Doctor's Phone</label>
+    <input type="tel" id="dph" placeholder="+91 98765 43210" />
+    <button class="btn" onclick="saveDoc()">💾 Save Doctor Info</button>
+    <div id="docsaved"></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">📋 Prescription / Lab Reports</div>
+    <div class="upload" onclick="N('rxf').click()">
+      <div style="font-size:30px">📋</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:5px">Tap to upload prescription or report</div>
+      <div style="font-size:11px;color:var(--rose-l);margin-top:2px">JPG · PNG · PDF supported</div>
+      <input type="file" id="rxf" accept="image/*,.pdf" onchange="handleRx(event)" />
+    </div>
+    <div id="rxout"></div>
+  </div>
+</div>
+
+<!-- ── 3. PERIOD ── -->
+<div class="sec" id="period">
+  <p class="hint">Track your cycle to predict periods, fertile window & ovulation.</p>
+  <div class="card">
+    <div class="ct">🗓️ Cycle Setup</div>
+    <label>First Day of Last Period</label>
+    <input type="date" id="lp" />
+    <div class="row">
+      <div><label>Cycle Length (days)</label><input type="number" id="cl" value="28" min="21" max="40" /></div>
+      <div><label>Period Duration (days)</label><input type="number" id="pdur" value="5" min="2" max="9" /></div>
+    </div>
+    <button class="btn" onclick="calcPeriod()">📊 Calculate My Cycle</button>
+  </div>
+  <div class="card" id="pres" style="display:none">
+    <div class="ct">📅 Cycle Calendar</div>
+    <div class="today-pill" id="pto"></div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px">
+      <div class="dlbl">S</div><div class="dlbl">M</div><div class="dlbl">T</div><div class="dlbl">W</div><div class="dlbl">T</div><div class="dlbl">F</div><div class="dlbl">S</div>
+    </div>
+    <div class="cyc" id="cycgrid"></div>
+    <div class="leg">
+      <div class="li"><div class="ld" style="background:#E8608A"></div>Period</div>
+      <div class="li"><div class="ld" style="background:#FFB3C6"></div>Fertile</div>
+      <div class="li"><div class="ld" style="background:#7B3B6E"></div>Ovulation</div>
+      <div class="li"><div class="ld" style="background:#D5F5EC"></div>Safe</div>
+    </div>
+    <div class="rb info mt" id="pnxt"></div>
+  </div>
+</div>
+
+<!-- ── 4. SAFE DAYS ── -->
+<div class="sec" id="safe">
+  <p class="hint">Know your safer days. Always use protection. This is educational only — not medical advice.</p>
+  <div class="card">
+    <div class="ct">💛 Today's Safety Check</div>
+    <label>First Day of Last Period</label>
+    <input type="date" id="slp" />
+    <label>Cycle Length (days)</label>
+    <input type="number" id="scl" value="28" />
+    <button class="btn" onclick="calcSafe()">🔍 Check Today's Status</button>
+  </div>
+  <div id="saferes"></div>
+  <div class="card">
+    <div class="ct">📖 Cycle Phases Guide</div>
+    <div style="font-size:12.5px;color:var(--muted);line-height:1.75">
+      <p>🩸 <b style="color:var(--rose)">Period (Day 1–5):</b> Menstruation. Low but not zero risk.</p><br>
+      <p>🟠 <b style="color:#E07B2A">Fertile Window (Day 8–14):</b> Very HIGH risk. Always use protection.</p><br>
+      <p>🟣 <b style="color:var(--plum)">Ovulation Day (~Day 14):</b> Peak fertility — highest pregnancy chance.</p><br>
+      <p>🟢 <b style="color:#4CAF7D">Luteal Phase (Day 15–28):</b> Lower but NOT zero risk.</p><br>
+      <p style="font-size:11px;background:rgba(232,96,138,.08);padding:9px;border-radius:9px;color:var(--mauve)">⚠️ Illness, stress & medications can shift ovulation. Consult a doctor for contraception.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── 5. WATER ── -->
+<div class="sec" id="water">
+  <p class="hint">Each glass = 250 ml. Tap any glass to add 250ml. Partial fill shows your current progress.</p>
+  <div class="card">
+    <div class="ct">🎯 Set Daily Goal</div>
+    <div class="row">
+      <div><label>Your Weight (kg)</label><input type="number" id="ww" placeholder="e.g. 60" /></div>
+      <div><label>Custom Goal (ml)</label><input type="number" id="wg" placeholder="Auto (33ml×kg)" /></div>
+    </div>
+    <button class="btn mint" onclick="setWGoal()">💧 Set My Water Goal</button>
+  </div>
+  <div class="card" id="wcard" style="display:none">
+    <div class="ct">💧 Today's Intake</div>
+    <div class="wbig">
+      <strong id="wml">0</strong>
+      <span>ml · <span id="wgl">0</span> glasses · Goal: <span id="wglbl">2000</span> ml</span>
+    </div>
+    <div class="g-wrap" id="gwrap"></div>
+    <div class="row mt">
+      <button class="btn mint" onclick="addW(250)">🥛 +1 Glass (250ml)</button>
+      <button class="btn mint" onclick="addW(500)">🍶 +2 Glasses (500ml)</button>
+    </div>
+    <div class="row" style="margin-top:8px;align-items:stretch">
+      <input type="number" id="wcus" placeholder="Custom ml..." style="margin:0" />
+      <button class="btn sky sm" style="margin:0;white-space:nowrap" onclick="addWCus()">+ Add</button>
+    </div>
+    <div class="rb info mt" id="wstat"></div>
+    <button class="btn sec mt" style="margin-top:10px" onclick="resetW()">🔄 Reset Day</button>
+  </div>
+</div>
+
+<!-- ── 6. MEDICINE ── -->
+<div class="sec" id="medicine">
+  <p class="hint">Add your medicines with doctor info. Set the right number of daily reminders.</p>
+  <div class="card">
+    <div class="ct">➕ Add Medicine Reminder</div>
+    <label>Medicine Name *</label>
+    <input type="text" id="mn" placeholder="e.g. Folic Acid, Iron 65mg, Vitamin D3..." />
+    <div class="row">
+      <div><label>Prescribed By (Doctor)</label><input type="text" id="mdoc" placeholder="Dr. Name..." /></div>
+      <div><label>Clinic / Hospital</label><input type="text" id="mplace" placeholder="Hospital or place..." /></div>
+    </div>
+    <label>Frequency</label>
+    <select id="mfreq" onchange="updTimings()">
+      <option value="1">Once daily</option>
+      <option value="2">Twice daily</option>
+      <option value="3">Three times daily</option>
+      <option value="4">Four times daily</option>
+      <option value="w">Once weekly</option>
+      <option value="asn">As needed (no reminder)</option>
+    </select>
+    <div id="twrap"></div>
+    <label>Notes (e.g. take after food)</label>
+    <input type="text" id="mnote" placeholder="Optional instructions..." />
+    <button class="btn" onclick="addMed()">💊 Add Medicine Reminder</button>
+  </div>
+  <div class="card">
+    <div class="ct">📋 My Medicines <span class="badge" id="mcount">0</span></div>
+    <div id="mlist"><p style="text-align:center;padding:18px;color:var(--muted);font-size:13px">No medicines added yet 💊</p></div>
+  </div>
+</div>
+
+<!-- ── 7. NUTRITION ── -->
+<div class="sec" id="nutrition">
+  <p class="hint">Log all meals with full nutritional data — calories, protein, iron, calcium, vitamins & more. 120+ Indian foods included.</p>
+
+  <div class="card">
+    <div class="ct">🔍 Add Food to Meal</div>
+    <label>Select Meal</label>
+    <select id="msel">
+      <option value="breakfast">☀️ Breakfast (7–9 AM)</option>
+      <option value="intermediate">🌿 Mid-Morning Snack (10:30–11:30 AM)</option>
+      <option value="lunch">🌞 Lunch (12:30–2 PM)</option>
+      <option value="tiffin">🌅 Evening Tiffin (4:30–6 PM)</option>
+      <option value="dinner">🌙 Dinner (7:30–9 PM)</option>
+    </select>
+    <label>Search Food</label>
+    <div class="fsw">
+      <input type="text" id="fsrch" placeholder="Type food name (Rice, Paneer, Mango, Dal...)" oninput="doFSearch()" autocomplete="off" style="margin-bottom:0" />
+      <div class="fsugg" id="fsugg"></div>
+    </div>
+    <div id="fprev" style="display:none;margin-top:8px"></div>
+    <div class="row mt">
+      <div><label>Quantity</label><input type="number" id="fqty" placeholder="100" style="margin-bottom:0" /></div>
+      <div><label>Unit</label>
+        <select id="funit" style="margin-bottom:0" onchange="updUnit()">
+          <option value="g">grams (g)</option>
+          <option value="ml">milliliters (ml)</option>
+          <option value="piece">piece / item</option>
+          <option value="cup">cup (~240g)</option>
+          <option value="tbsp">tablespoon (~15g)</option>
+          <option value="tsp">teaspoon (~5g)</option>
+          <option value="katori">katori / bowl (~150g)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn amr mt" onclick="addFoodItem()">🔥 Add to Meal Log</button>
+  </div>
+
+  <div class="card">
+    <div class="ct">⚡ Quick Add Popular Foods</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      <button class="btn sec xs" onclick="qAdd('Rice (cooked)',150)">🍚 Rice</button>
+      <button class="btn sec xs" onclick="qAdd('Chapati/Roti',40)">🫓 Roti</button>
+      <button class="btn sec xs" onclick="qAdd('Dal (toor cooked)',150)">🫘 Dal</button>
+      <button class="btn sec xs" onclick="qAdd('Idli',120)">🍡 Idli</button>
+      <button class="btn sec xs" onclick="qAdd('Dosa',100)">🥞 Dosa</button>
+      <button class="btn sec xs" onclick="qAdd('Egg (whole)',55)">🥚 Egg</button>
+      <button class="btn sec xs" onclick="qAdd('Paneer',80)">🧀 Paneer</button>
+      <button class="btn sec xs" onclick="qAdd('Chicken (breast cooked)',100)">🍗 Chicken</button>
+      <button class="btn sec xs" onclick="qAdd('Rohu Fish (cooked)',100)">🐟 Fish</button>
+      <button class="btn sec xs" onclick="qAdd('Milk (full fat)',200)">🥛 Milk</button>
+      <button class="btn sec xs" onclick="qAdd('Curd/Yogurt',100)">🍶 Curd</button>
+      <button class="btn sec xs" onclick="qAdd('Banana',120)">🍌 Banana</button>
+      <button class="btn sec xs" onclick="qAdd('Apple',150)">🍎 Apple</button>
+      <button class="btn sec xs" onclick="qAdd('Mango',150)">🥭 Mango</button>
+      <button class="btn sec xs" onclick="qAdd('Almonds',28)">🌰 Almonds</button>
+      <button class="btn sec xs" onclick="qAdd('Spinach (palak)',100)">🥬 Palak</button>
+      <button class="btn sec xs" onclick="qAdd('Gulab Jamun',60)">🍮 Gulab Jamun</button>
+      <button class="btn sec xs" onclick="qAdd('Ice Cream (vanilla)',80)">🍦 Ice Cream</button>
+      <button class="btn sec xs" onclick="qAdd('Samosa',60)">🥟 Samosa</button>
+      <button class="btn sec xs" onclick="qAdd('Dates',30)">🫘 Dates</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">🤖 Custom Food — AI Lookup</div>
+    <p class="hint">Food not in the list? AI will search and fill in the nutritional data for you.</p>
+    <input type="text" id="cfname" placeholder="e.g. Khandvi, Modak, Pesarattu, Sandesh..." />
+    <button class="btn sec" onclick="aiLookup()">🤖 Search Nutrition with AI</button>
+    <div class="ai-load" id="aiload"><span class="spin"></span>AI is searching nutritional data...</div>
+    <div id="cfres"></div>
+  </div>
+
+  <div id="meallog"></div>
+
+  <div class="ntot" id="ntot" style="display:none">
+    <div class="ntot-title">📊 Today's Complete Nutrition</div>
+    <div class="ntot-main" id="ntcal">0 <small style="font-size:14px;opacity:.75">kcal</small></div>
+    <div class="ntgrid">
+      <div class="nti"><div class="nti-val" id="ntpro">0g</div><div class="nti-lbl">🥩 Protein</div></div>
+      <div class="nti"><div class="nti-val" id="ntir">0mg</div><div class="nti-lbl">🩸 Iron</div></div>
+      <div class="nti"><div class="nti-val" id="ntca">0mg</div><div class="nti-lbl">🦴 Calcium</div></div>
+      <div class="nti"><div class="nti-val" id="ntvc">0mg</div><div class="nti-lbl">🍊 Vitamin C</div></div>
+      <div class="nti"><div class="nti-val" id="ntfo">0mcg</div><div class="nti-lbl">🟢 Folate</div></div>
+      <div class="nti"><div class="nti-val" id="ntfi">0g</div><div class="nti-lbl">🌾 Fiber</div></div>
+    </div>
+  </div>
+
+  <div class="card" id="nbcard" style="display:none;margin-top:12px">
+    <div class="ct">📈 Daily Goal Progress</div>
+    <div id="nbbars"></div>
+  </div>
+
+  <button class="btn sec mt" id="clrbtn" style="display:none" onclick="clearMeals()">🔄 Clear Today's Food Log</button>
+</div>
+
+</div><!-- /app -->
+<div id="notif"></div>
+
+<script>
+// ════════════════════════════════════════
+// INDIAN FOOD DATABASE
+// Format: [cal, protein, iron, calcium, vitC, folate, fiber] per 100g
+// ════════════════════════════════════════
+const FDB = {
+  // ── GRAINS & BREADS
+  "Rice (cooked)":[130,2.7,0.2,10,0,8,0.4],
+  "Brown Rice (cooked)":[123,2.6,0.5,10,0,10,1.8],
+  "Chapati/Roti":[297,8,2.7,34,0,45,2.7],
+  "Paratha (plain)":[326,7.5,2.5,30,0,38,2.5],
+  "Aloo Paratha":[260,6,2,25,5,30,2],
+  "Methi Paratha":[290,7,2.8,60,5,55,3],
+  "Naan":[310,8.9,2.1,43,0,35,1.4],
+  "Dosa":[168,3.5,1,16,0,18,1],
+  "Masala Dosa":[175,4,1.1,18,3,18,1.2],
+  "Idli":[58,2,0.6,6,0,8,0.5],
+  "Uttapam":[120,3.5,0.8,18,3,12,1.5],
+  "Poha":[130,2.5,1.4,10,2,12,0.8],
+  "Upma":[145,3.5,1,15,2,12,1.5],
+  "Khichdi":[124,4.5,1,20,3,22,2],
+  "Puri":[340,7.5,2.8,28,0,32,2],
+  "Bhatura":[368,9,2.5,40,0,35,1.8],
+  "Pongal":[155,4.5,1.2,25,2,20,1.8],
+  "Bread (white)":[265,9,1.7,77,0,30,2.3],
+  "Bread (wheat)":[247,8.5,2.5,90,0,40,6.9],
+  // ── DALS & LEGUMES
+  "Dal (toor cooked)":[116,7,1.8,19,1,60,4],
+  "Dal (moong cooked)":[105,7,1.4,27,1,60,4.1],
+  "Dal (chana cooked)":[164,8.9,2.9,49,2,180,7.6],
+  "Rajma (cooked)":[127,8.7,2.9,50,2,90,6.4],
+  "Chole (cooked)":[164,8.9,2.9,49,2,180,7.6],
+  "Masoor Dal (cooked)":[116,9,3.3,19,1,90,7.9],
+  "Dal Makhani":[145,8.5,2.2,70,3,30,3.5],
+  "Moong Sprouts":[30,3,0.9,13,9,60,1.8],
+  "Peanuts (raw)":[567,25.8,4.6,92,0,95,8.5],
+  "Soya Chunks (cooked)":[150,18,3,200,0,100,4],
+  // ── VEGETABLES
+  "Spinach (palak)":[23,2.9,2.7,99,28,194,2.2],
+  "Fenugreek (methi)":[49,4.4,3.3,395,3,57,2.7],
+  "Drumstick (moringa)":[64,9.4,4,185,51,40,2],
+  "Potato":[77,2,0.8,12,20,16,2.2],
+  "Sweet Potato":[86,1.6,0.6,30,3,11,3],
+  "Tomato":[18,0.9,0.5,10,13,15,1.2],
+  "Onion":[40,1.1,0.2,23,7,20,1.7],
+  "Carrot":[41,0.9,0.3,33,6,19,2.8],
+  "Cauliflower":[25,1.9,0.4,22,48,57,2],
+  "Cabbage":[25,1.3,0.5,40,36,43,2.5],
+  "Brinjal/Eggplant":[25,1,0.2,9,2,22,3],
+  "Lady finger (bhindi)":[33,1.9,0.4,82,23,88,3.2],
+  "Capsicum (green)":[31,1,0.4,7,127,10,2.1],
+  "Peas (green)":[81,5.4,1.5,25,40,65,5.7],
+  "Beetroot":[43,1.6,0.8,16,5,109,2.8],
+  "Pumpkin":[26,1,0.8,21,9,16,0.5],
+  "Cucumber":[16,0.7,0.3,16,3,7,0.5],
+  "Bottle Gourd (lauki)":[14,0.6,0.2,26,7,12,0.5],
+  "Bitter Gourd (karela)":[34,3.6,0.4,19,84,72,2.6],
+  "Corn (sweet)":[86,3.3,0.5,2,7,42,2],
+  "Green Beans":[31,1.8,1,37,12,37,3.4],
+  "Palak Paneer":[120,7,1.5,150,15,40,1.5],
+  "Aloo Gobi":[85,3,0.8,25,20,15,2],
+  "Mixed Veg Curry":[90,2.5,0.9,30,15,20,2.5],
+  // ── MEAT & EGGS & FISH
+  "Chicken (breast cooked)":[165,31,1,15,0,4,0],
+  "Chicken Curry":[200,15,1.5,30,3,8,0],
+  "Mutton (cooked)":[294,25.6,2.7,17,0,2,0],
+  "Egg (whole)":[155,13,1.8,56,0,47,0],
+  "Egg white":[52,11,0.1,7,0,4,0],
+  "Egg Curry":[180,12,1.8,60,5,20,0.5],
+  "Rohu Fish (cooked)":[97,16.6,1,650,0,10,0],
+  "Pomfret (cooked)":[87,17,0.6,150,0,8,0],
+  "Salmon":[206,20,0.8,15,0,26,0],
+  "Prawn/Shrimp":[99,24,0.5,64,0,34,0],
+  "Sardine":[208,24.6,2.9,382,0,10,0],
+  "Tuna (canned)":[116,25.5,1.3,18,0,3,0],
+  "Hilsa / Ilish Fish":[310,21,1.5,180,0,12,0],
+  "Fish Curry":[150,15,1.2,80,5,12,0.5],
+  "Butter Chicken":[190,15,1.2,40,4,12,0.5],
+  // ── DAIRY
+  "Milk (full fat)":[61,3.2,0.1,113,0,5,0],
+  "Milk (skim)":[34,3.4,0.1,123,0,5,0],
+  "Curd/Yogurt":[61,3.5,0.1,110,0,14,0],
+  "Paneer":[265,18.3,0.5,480,0,7,0],
+  "Cheese":[402,25,0.7,721,0,20,0],
+  "Butter":[717,0.9,0,24,0,0,0],
+  "Ghee":[900,0,0,0,0,0,0],
+  "Lassi (sweet)":[70,3.5,0.1,95,1,10,0],
+  "Chaas/Buttermilk":[40,3,0.1,90,0,5,0],
+  "Khoya/Mawa":[421,20,0.5,650,0,5,0],
+  "Paneer Butter Masala":[240,9,0.8,180,5,15,0.5],
+  // ── FRUITS
+  "Banana":[89,1.1,0.3,5,9,20,2.6],
+  "Apple":[52,0.3,0.1,6,5,3,2.4],
+  "Mango":[60,0.8,0.1,11,36,14,1.6],
+  "Orange":[47,0.9,0.1,40,53,30,2.4],
+  "Guava":[68,2.6,0.3,18,228,49,5.4],
+  "Papaya":[43,0.5,0.1,20,62,37,1.7],
+  "Grapes":[69,0.7,0.4,37,3,2,0.9],
+  "Watermelon":[30,0.6,0.2,7,8,3,0.4],
+  "Pomegranate":[83,1.7,0.3,10,10,38,4],
+  "Pineapple":[50,0.5,0.3,13,48,18,1.4],
+  "Coconut (fresh)":[354,3.3,2.4,14,3,26,9],
+  "Lemon":[29,1.1,0.3,26,53,11,2.8],
+  "Amla/Gooseberry":[44,0.9,0.5,25,600,6,3.4],
+  "Dates":[282,2.5,0.9,64,0,19,8],
+  "Jackfruit":[95,1.7,0.3,24,14,24,1.5],
+  "Pear":[57,0.4,0.2,9,5,7,3.1],
+  "Strawberry":[32,0.7,0.4,16,59,24,2],
+  "Kiwi":[61,1.1,0.3,34,93,25,3],
+  "Litchi":[66,0.8,0.3,5,72,14,1.3],
+  "Chikoo/Sapota":[83,0.4,1.1,21,15,15,5.3],
+  // ── NUTS & DRY FRUITS
+  "Almonds":[579,21.2,3.7,264,0,44,12.5],
+  "Cashew":[553,18.2,6.7,37,0,25,3.3],
+  "Walnut":[654,15.2,2.9,98,1,98,6.7],
+  "Pistachio":[562,20.2,3.9,105,6,51,10.6],
+  "Peanuts (roasted)":[599,28,2.3,92,0,145,8],
+  "Raisins":[299,3.1,1.9,28,5,5,3.7],
+  "Dates (dried)":[282,2.5,0.9,64,0,19,8],
+  "Figs (dried)":[249,3.3,2,162,1,9,9.8],
+  "Apricot (dried)":[241,3.4,2.7,55,5,1,7.3],
+  "Chia Seeds":[486,16.5,7.7,631,2,49,34.4],
+  "Flax Seeds":[534,18.3,5.7,255,1,87,27.3],
+  "Pumpkin Seeds":[559,30,8.8,46,2,57,6],
+  // ── SWEETS & DESSERTS
+  "Ladoo (besan)":[450,8,2,40,0,15,1.5],
+  "Gulab Jamun":[385,5,0.5,60,0,10,0.3],
+  "Rasgulla":[186,4,0.3,90,0,12,0],
+  "Halwa (suji)":[330,3,0.8,30,0,8,0.5],
+  "Kheer":[150,4,0.2,110,0,8,0],
+  "Jalebi":[380,3,0.5,20,0,5,0.2],
+  "Barfi (milk)":[400,8,0.3,240,0,10,0],
+  "Gajar ka Halwa":[250,3.5,0.8,60,3,12,2],
+  "Kaju Katli":[490,12,6.5,40,0,28,2],
+  "Coconut Barfi":[420,4,1.5,30,3,8,3.5],
+  "Peda":[430,9,0.3,260,0,8,0],
+  "Rasmalai":[220,5,0.3,150,0,10,0],
+  // ── ICE CREAM & FROZEN
+  "Ice Cream (vanilla)":[207,3.5,0.1,128,0,6,0],
+  "Ice Cream (chocolate)":[216,3.8,0.6,118,0,7,0.5],
+  "Kulfi":[180,4,0.1,140,0,5,0],
+  "Mango Ice Cream":[193,3,0.1,100,3,5,0],
+  // ── STREET FOOD & DISHES
+  "Samosa":[262,5,1.5,20,8,10,2],
+  "Pakora":[290,7,2,35,10,15,2.5],
+  "Vada Pav":[297,6.5,1.8,35,8,12,2],
+  "Pav Bhaji":[180,4.5,1.5,40,15,18,2.5],
+  "Chole Bhature":[420,9,3,65,8,30,4],
+  "Biryani (chicken)":[200,11,1.2,30,3,12,0.8],
+  "Biryani (veg)":[180,4.5,1,25,5,15,1.5],
+  "Rajma Chawal":[200,8,2.5,40,3,60,4],
+  "Vegetable Pulao":[170,4,1,25,8,18,2],
+  "Dhokla":[160,6,1,50,2,20,1],
+  "Kachori":[385,7,2.2,25,0,20,2],
+  "Poori Bhaji":[300,5.5,2,30,10,25,2]
+};
+
+const NNAMES={cal:'Calories',protein:'Protein',iron:'Iron',calcium:'Calcium',vitC:'Vitamin C',folate:'Folate',fiber:'Fiber'};
+const NUNITS={cal:'kcal',protein:'g',iron:'mg',calcium:'mg',vitC:'mg',folate:'mcg',fiber:'g'};
+const NCLRS={cal:'#E8608A',protein:'#6ECDB5',iron:'#E07B2A',calcium:'#64B5D9',vitC:'#F4A742',folate:'#7B3B6E',fiber:'#4CAF7D'};
+const UNITG={g:1,ml:1,piece:100,cup:240,tbsp:15,tsp:5,katori:150};
+
+function getDV(preg){
+  return preg==='yes'
+    ?{cal:2300,protein:71,iron:27,calcium:1000,vitC:85,folate:600,fiber:28}
+    :{cal:2000,protein:46,iron:18,calcium:1000,vitC:75,folate:400,fiber:25};
+}
+
+// ════════════════════════════════════════
+// APP STATE
+// ════════════════════════════════════════
+let prof=JSON.parse(localStorage.getItem('bc_prof')||'null');
+let meds=JSON.parse(localStorage.getItem('bc_meds')||'[]');
+let wGoal=+localStorage.getItem('bc_wg')||2000;
+let wMl=0;
+let selFoodName=null;
+const MEALS={
+  breakfast:{items:[],icon:'☀️',name:'Breakfast',time:'7–9 AM'},
+  intermediate:{items:[],icon:'🌿',name:'Mid-Morning Snack',time:'10:30–11:30 AM'},
+  lunch:{items:[],icon:'🌞',name:'Lunch',time:'12:30–2 PM'},
+  tiffin:{items:[],icon:'🌅',name:'Evening Tiffin',time:'4:30–6 PM'},
+  dinner:{items:[],icon:'🌙',name:'Dinner',time:'7:30–9 PM'}
+};
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+window.onload=()=>{
+  const td=new Date().toISOString().split('T')[0];
+  N('lp').value=td; N('slp').value=td;
+  N('hdate').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',month:'long',day:'numeric'});
+  if(prof){
+    N('p-overlay').style.display='none';N('app').style.display='block';
+    renderProf();renderMeds();renderMeals();updTimings();
+    const doc=JSON.parse(localStorage.getItem('bc_doc')||'null');
+    if(doc){N('dn').value=doc.name||'';N('ds').value=doc.spec||'';N('dp').value=doc.place||'';N('dph').value=doc.phone||'';}
+    const conds=JSON.parse(localStorage.getItem('bc_cond')||'[]');
+    document.querySelectorAll('.chip').forEach(c=>{if(conds.includes(c.textContent.trim()))c.classList.add('on');});
+  } else {
+    N('p-overlay').style.display='flex';N('app').style.display='none';
+  }
+  updTimings();
+};
+
+// ════════════════════════════════════════
+// UTILITIES
+// ════════════════════════════════════════
+function N(id){return document.getElementById(id);}
+function ST(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  N(id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>{
+    if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes(`'${id}'`))t.classList.add('active');
+  });
+}
+function notify(m){const n=N('notif');n.textContent=m;n.style.display='block';clearTimeout(notify._t);notify._t=setTimeout(()=>n.style.display='none',3200);}
+function adDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function fmtD(d){return d.toLocaleDateString('en-IN',{month:'short',day:'numeric'});}
+function toG(qty,unit){return qty*(UNITG[unit]||1);}
+function fmtT(t){if(!t)return'';const[h,m]=t.split(':').map(Number);return`${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;}
+
+// ════════════════════════════════════════
+// PROFILE
+// ════════════════════════════════════════
+function saveProf(){
+  const name=N('pn').value.trim(),age=N('pa').value,wt=N('pw').value,ht=N('ph').value;
+  if(!name||!age||!wt||!ht){alert('Please fill Name, Age, Weight and Height');return;}
+  prof={name,age:+age,weight:+wt,height:+ht,blood:N('pb').value,pregnant:N('pp').value,weeks:N('pwk').value};
+  localStorage.setItem('bc_prof',JSON.stringify(prof));
+  N('p-overlay').style.display='none';N('app').style.display='block';
+  renderProf();renderMeds();renderMeals();updTimings();
+}
+function editProf(){
+  if(prof){
+    N('pn').value=prof.name;N('pa').value=prof.age;N('pw').value=prof.weight;N('ph').value=prof.height;
+    N('pb').value=prof.blood||'';N('pp').value=prof.pregnant||'no';N('pwk').value=prof.weeks||'';
+    N('wkr').style.display=prof.pregnant==='yes'?'block':'none';
+  }
+  N('p-overlay').style.display='flex';
+}
+function renderProf(){
+  if(!prof)return;
+  const pStat=prof.pregnant==='yes'?`🤰 Pregnant (${prof.weeks||'?'} wks)`:prof.pregnant==='plan'?'🌸 Planning to conceive':'👩 Not pregnant';
+  N('hname').textContent=`Hello, ${prof.name.split(' ')[0]} 🌸`;
+  N('hstatus').textContent=pStat;
+  const bmi=(prof.weight/((prof.height/100)**2)).toFixed(1);
+  let bc='',bb='',bc2='';
+  if(bmi<18.5){bc='Underweight';bb='warn';bc2='#F4A742';}
+  else if(bmi<25){bc='Healthy Weight ✅';bb='safe';bc2='#4CAF7D';}
+  else if(bmi<30){bc='Overweight';bb='warn';bc2='#F4A742';}
+  else{bc='Obese';bb='danger';bc2='#E8608A';}
+  N('pview').innerHTML=`
+    <div class="pstat"><div class="pico">👤</div><div><div class="plbl">Name</div><div class="pval">${prof.name}</div></div></div>
+    <div class="row" style="gap:8px">
+      <div class="pstat"><div class="pico">🎂</div><div><div class="plbl">Age</div><div class="pval">${prof.age} yrs</div></div></div>
+      <div class="pstat"><div class="pico">🩸</div><div><div class="plbl">Blood</div><div class="pval">${prof.blood||'—'}</div></div></div>
+    </div>
+    <div class="row" style="gap:8px">
+      <div class="pstat"><div class="pico">⚖️</div><div><div class="plbl">Weight</div><div class="pval">${prof.weight} kg</div></div></div>
+      <div class="pstat"><div class="pico">📏</div><div><div class="plbl">Height</div><div class="pval">${prof.height} cm</div></div></div>
+    </div>
+    <div class="pstat"><div class="pico">🤰</div><div><div class="plbl">Pregnancy</div><div class="pval">${pStat}</div></div></div>`;
+  const ir=[+(18.5*(prof.height/100)**2).toFixed(0),+(24.9*(prof.height/100)**2).toFixed(0)];
+  N('bmiview').innerHTML=`
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+      <div style="font-size:38px;font-family:'Playfair Display',serif;font-weight:700;color:${bc2}">${bmi}</div>
+      <div><div style="font-size:14px;font-weight:700;color:${bc2}">${bc}</div><div style="font-size:12px;color:var(--muted)">BMI Score</div></div>
+    </div>
+    <div class="rb ${bb}">
+      ${bc.includes('Healthy')?'<b>✅ Great!</b>You\'re in the healthy range. Keep it balanced.':
+        bc==='Underweight'?'<b>📈 Underweight</b>Include more nutritious, calorie-rich foods.':
+        bc==='Overweight'?'<b>📊 Overweight</b>Moderate diet changes and regular activity can help.':
+        '<b>⚠️ Obese</b>Consult a doctor for a personalized plan.'}
+      <br><small>Ideal weight for your height: <b>${ir[0]}–${ir[1]} kg</b></small>
+    </div>`;
+}
+
+// ════════════════════════════════════════
+// MEDICAL
+// ════════════════════════════════════════
+function saveCond(){
+  const conds=Array.from(document.querySelectorAll('.chip.on')).map(c=>c.textContent.trim());
+  const oth=N('ocond').value.trim();if(oth)conds.push(oth);
+  localStorage.setItem('bc_cond',JSON.stringify(conds));
+  N('condsaved').innerHTML=`<div class="rb safe mt"><b>✅ Saved!</b>${conds.length?conds.join(' · '):'No conditions selected.'}</div>`;
+  notify('✅ Conditions saved!');
+}
+function saveDoc(){
+  const doc={name:N('dn').value.trim(),spec:N('ds').value.trim(),place:N('dp').value.trim(),phone:N('dph').value.trim()};
+  if(!doc.name){notify('⚠️ Enter doctor name');return;}
+  localStorage.setItem('bc_doc',JSON.stringify(doc));
+  N('docsaved').innerHTML=`<div class="rb safe mt"><b>✅ Dr. ${doc.name} saved!</b>${doc.spec?doc.spec+' · ':''}${doc.place}<br>📞 ${doc.phone||'No phone added'}</div>`;
+  notify('👨‍⚕️ Doctor info saved!');
+}
+function handleRx(e){
+  const file=e.target.files[0];if(!file)return;
+  if(file.type.startsWith('image/')){
+    const r=new FileReader();
+    r.onload=ev=>{N('rxout').innerHTML=`<div style="margin-top:10px"><div style="font-size:12px;color:var(--mint);font-weight:700;margin-bottom:5px">✅ Uploaded: ${file.name}</div><img src="${ev.target.result}" style="max-width:100%;border-radius:12px;border:1.5px solid var(--border)" /></div>`;};
+    r.readAsDataURL(file);
+  } else {
+    N('rxout').innerHTML=`<div class="rb safe mt"><b>✅ File Uploaded</b>${file.name} · ${(file.size/1024).toFixed(1)} KB</div>`;
+  }
+  notify('📋 Prescription uploaded!');
+}
+
+// ════════════════════════════════════════
+// PERIOD TRACKER
+// ════════════════════════════════════════
+function calcPeriod(){
+  const lp=N('lp').value,cl=+N('cl').value||28,pd=+N('pdur').value||5;
+  if(!lp){notify('⚠️ Enter last period date');return;}
+  const start=new Date(lp),today=new Date();today.setHours(0,0,0,0);
+  const grid=N('cycgrid');grid.innerHTML='';
+  const ms=new Date(start.getFullYear(),start.getMonth(),1);
+  for(let i=0;i<ms.getDay();i++){const d=document.createElement('div');d.className='dc norm';grid.appendChild(d);}
+  const dim=new Date(start.getFullYear(),start.getMonth()+1,0).getDate();
+  const ov=cl-14;
+  for(let day=1;day<=dim;day++){
+    const cd=new Date(start.getFullYear(),start.getMonth(),day);
+    const diff=Math.round((cd-start)/86400000);
+    const c=document.createElement('div');c.className='dc';c.textContent=day;
+    if(diff>=0&&diff<pd)c.classList.add('period');
+    else if(diff===ov)c.classList.add('ovul');
+    else if(diff>=ov-5&&diff<=ov+1)c.classList.add('fertile');
+    else if(diff>=0&&diff<cl)c.classList.add('safe');
+    else c.classList.add('norm');
+    if(cd.toDateString()===today.toDateString()){c.style.outline='2.5px solid var(--plum)';c.style.outlineOffset='2px';}
+    grid.appendChild(c);
+  }
+  const done=Math.floor((today-start)/86400000/cl);
+  const nxt=adDays(start,(done+1)*cl);
+  const du=Math.round((nxt-today)/86400000);
+  const dt=Math.round((today-start)/86400000)%cl;
+  let st='';
+  if(dt>=0&&dt<pd)st='🩸 You are on your period today';
+  else if(dt===ov)st='🟣 Today is your ovulation day!';
+  else if(dt>=ov-5&&dt<=ov+1)st='🟠 You are in your fertile window';
+  else st='🟢 Regular day in your cycle';
+  N('pto').textContent=st;
+  N('pnxt').innerHTML=`<b>📅 Next Period: ${fmtD(nxt)}</b>In ${du} days · Ovulation around Day ${ov} (${fmtD(adDays(start,ov))})`;
+  N('pres').style.display='block';N('pres').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ════════════════════════════════════════
+// SAFE DAYS
+// ════════════════════════════════════════
+function calcSafe(){
+  const lp=N('slp').value,cl=+N('scl').value||28;
+  if(!lp){notify('⚠️ Enter last period date');return;}
+  const start=new Date(lp),today=new Date();today.setHours(0,0,0,0);
+  const cd=Math.round((today-start)/86400000)%cl+1;
+  const ov=cl-14,fs=ov-5,fe=ov+1;
+  let html='';
+  if(cd>=1&&cd<=5){
+    html=`<div class="rb danger"><b>🩸 Day ${cd} — Period Phase</b>Menstruation. Low risk but not zero. Always use protection for safety.</div>`;
+  } else if(cd>=fs&&cd<=fe){
+    html=`<div class="rb danger"><b>⚠️ Day ${cd} — FERTILE WINDOW 🚫</b>Very HIGH pregnancy risk. Ovulation is near or happening right now.<br><strong>👉 Always use protection during this window.</strong></div>`;
+  } else {
+    html=`<div class="rb safe"><b>✅ Day ${cd} — Relatively Safer Phase</b>Post-ovulation (luteal) phase. Lower but NOT zero risk.<br><small>Irregular cycles can shift ovulation. Track consistently.</small></div>`;
+  }
+  html+=`<div class="rb info mt"><b>📊 Your Cycle Today</b>Day <strong>${cd}</strong> of ${cl} · Fertile Window: Day ${fs}–${fe} · Ovulation: ~Day ${ov}</div>`;
+  N('saferes').innerHTML=html;
+}
+
+// ════════════════════════════════════════
+// WATER TRACKER (250ml per glass)
+// ════════════════════════════════════════
+function setWGoal(){
+  const wt=+N('ww').value,man=+N('wg').value;
+  wGoal=man||(wt?Math.round(wt*33):2000);
+  localStorage.setItem('bc_wg',wGoal);wMl=0;
+  N('wglbl').textContent=wGoal;N('wcard').style.display='block';
+  renderGlasses();updWater();notify('💧 Goal set to '+wGoal+'ml!');
+}
+function renderGlasses(){
+  const wrap=N('gwrap');wrap.innerHTML='';
+  const totalG=Math.min(Math.ceil(wGoal/250),16);
+  const fullG=Math.floor(wMl/250);
+  const partialPct=(wMl%250)/250*100;
+  for(let i=0;i<totalG;i++){
+    const g=document.createElement('div');g.className='glass';
+    g.title=`Glass ${i+1} · 250ml`;
+    g.onclick=()=>addW(250);
+    let fill=0;
+    if(i<fullG)fill=100;
+    else if(i===fullG&&partialPct>0)fill=partialPct;
+    g.innerHTML=`<div class="gfill" style="height:${fill}%"></div><div class="gnum">${i+1}</div>`;
+    wrap.appendChild(g);
+  }
+}
+function addW(ml){wMl=Math.min(wMl+ml,wGoal*1.5);renderGlasses();updWater();}
+function addWCus(){const v=+N('wcus').value;if(!v||v<=0){notify('⚠️ Enter valid ml');return;}addW(v);N('wcus').value='';}
+function resetW(){wMl=0;renderGlasses();updWater();notify('🔄 Day reset!');}
+function updWater(){
+  const gl=Math.round(wMl/250*10)/10;
+  N('wml').textContent=wMl;N('wgl').textContent=gl;
+  const pct=Math.min(Math.round(wMl/wGoal*100),100);
+  const st=N('wstat');
+  if(wMl>=wGoal){st.className='rb safe';st.innerHTML=`<b>🎉 Goal Reached! (${pct}%)</b>Amazing! You're perfectly hydrated today. 💙`;}
+  else if(pct>=60){st.className='rb info';st.innerHTML=`<b>💧 ${pct}% of goal</b>Great progress! ${wGoal-wMl}ml more to reach your goal.`;}
+  else{st.className='rb warn';st.innerHTML=`<b>⚠️ Only ${pct}% — Drink more!</b>You need ${wGoal-wMl}ml more today. One glass every 2 hours helps!`;}
+}
+
+// ════════════════════════════════════════
+// MEDICINE REMINDERS
+// ════════════════════════════════════════
+const TL=['Morning','Afternoon','Evening','Night'];
+const TD=['07:00','13:00','18:00','21:00'];
+
+function updTimings(){
+  const freq=N('mfreq').value;const wrap=N('twrap');
+  if(freq==='asn'){wrap.innerHTML=`<div class="rb info" style="margin-bottom:10px">⚡ As needed — no fixed time reminder will be set.</div>`;return;}
+  if(freq==='w'){
+    wrap.innerHTML=`<div class="row"><div><label>Day of Week</label><select id="mday" style="margin-bottom:10px"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select></div><div><label>⏰ Reminder Time</label><input type="time" id="mt0" value="09:00" /></div></div>`;
+    return;
+  }
+  const count=+freq;let html='';
+  for(let i=0;i<count;i++){
+    if(i%2===0)html+='<div class="row">';
+    html+=`<div><label>⏰ ${TL[i]||'Dose '+(i+1)} Time</label><input type="time" id="mt${i}" value="${TD[i]||'09:00'}" /></div>`;
+    if(i%2===1||i===count-1)html+='</div>';
+  }
+  wrap.innerHTML=html;
+}
+function getTimes(){
+  const freq=N('mfreq').value;
+  if(freq==='asn')return[];
+  if(freq==='w'){const el=N('mt0');return el?[{label:N('mday').value,time:el.value}]:[];}
+  const times=[];const count=+freq;
+  for(let i=0;i<count;i++){const el=N(`mt${i}`);if(el)times.push({label:TL[i],time:el.value});}
+  return times;
+}
+function addMed(){
+  const name=N('mn').value.trim();if(!name){notify('⚠️ Enter medicine name');return;}
+  const freq=N('mfreq').value;
+  const fLabel={'1':'Once daily','2':'Twice daily','3':'Three times daily','4':'Four times daily','w':'Weekly','asn':'As needed'}[freq];
+  const times=getTimes();
+  const med={id:Date.now(),name,doc:N('mdoc').value.trim(),place:N('mplace').value.trim(),freq:fLabel,freqKey:freq,times,notes:N('mnote').value.trim()};
+  meds.push(med);localStorage.setItem('bc_meds',JSON.stringify(meds));
+  N('mn').value='';N('mdoc').value='';N('mplace').value='';N('mnote').value='';
+  renderMeds();notify(`💊 ${name} added!`);
+  // Schedule notifications
+  times.forEach(t=>{
+    const[h,m]=t.time.split(':').map(Number);
+    const alarm=new Date();alarm.setHours(h,m,0,0);
+    if(alarm<=new Date())alarm.setDate(alarm.getDate()+1);
+    setTimeout(()=>notify(`💊 Time for ${name}!`),alarm-new Date());
+  });
+  if('Notification' in window)Notification.requestPermission();
+}
+function delMed(id){meds=meds.filter(m=>m.id!==id);localStorage.setItem('bc_meds',JSON.stringify(meds));renderMeds();notify('🗑️ Removed');}
+function renderMeds(){
+  N('mcount').textContent=meds.length;
+  if(!meds.length){N('mlist').innerHTML='<p style="text-align:center;padding:18px;color:var(--muted);font-size:13px">No medicines added yet 💊</p>';return;}
+  N('mlist').innerHTML=meds.map(m=>{
+    const pills=m.times.length
+      ?m.times.map(t=>`<span class="tpill">⏰ ${t.label} ${fmtT(t.time)}</span>`).join('')
+      :'<span class="tpill">As needed</span>';
+    return`<div class="med-item">
+      <div class="med-ico">💊</div>
+      <div class="med-info">
+        <div class="med-name">${m.name}</div>
+        <div class="med-sub">${m.freq}${m.doc?' · Dr. '+m.doc:''}${m.place?' · '+m.place:''}${m.notes?' · '+m.notes:''}</div>
+        <div class="tpills">${pills}</div>
+      </div>
+      <button class="mdel" onclick="delMed(${m.id})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+// NUTRITION TRACKER
+// ════════════════════════════════════════
+function doFSearch(){
+  const q=N('fsrch').value.toLowerCase().trim(),box=N('fsugg');
+  if(q.length<2){box.style.display='none';selFoodName=null;N('fprev').style.display='none';return;}
+  const matches=Object.keys(FDB).filter(f=>f.toLowerCase().includes(q)).slice(0,10);
+  if(!matches.length){box.style.display='none';return;}
+  box.innerHTML=matches.map(f=>{
+    const d=FDB[f];
+    return`<div class="fsi" onclick="selFood('${f.replace(/'/g,"\\'")}')">
+      ${f}<small>🔥${d[0]}kcal · 🥩${d[1]}g protein · 🩸${d[2]}mg iron per 100g</small>
+    </div>`;
+  }).join('');
+  box.style.display='block';
+}
+function selFood(name){
+  selFoodName=name;N('fsrch').value=name;N('fsugg').style.display='none';
+  const d=FDB[name];
+  N('fprev').innerHTML=`<div class="rb info">
+    <b>📊 ${name} — per 100g</b>
+    🔥 ${d[0]} kcal &nbsp;·&nbsp; 🥩 ${d[1]}g protein &nbsp;·&nbsp; 🩸 ${d[2]}mg iron<br>
+    🦴 ${d[3]}mg calcium &nbsp;·&nbsp; 🍊 ${d[4]}mg Vit C &nbsp;·&nbsp; 🟢 ${d[5]}mcg folate &nbsp;·&nbsp; 🌾 ${d[6]}g fiber
+  </div>`;
+  N('fprev').style.display='block';
+}
+function updUnit(){
+  const defs={g:100,ml:200,piece:1,cup:1,tbsp:2,tsp:3,katori:1};
+  N('fqty').value=defs[N('funit').value]||100;
+}
+function makeItem(name,grams,d){
+  const f=grams/100;
+  return{id:Date.now(),name,qty:grams,unit:'g',grams,
+    cal:+(d[0]*f).toFixed(1),protein:+(d[1]*f).toFixed(1),iron:+(d[2]*f).toFixed(2),
+    calcium:+(d[3]*f).toFixed(0),vitC:+(d[4]*f).toFixed(1),folate:+(d[5]*f).toFixed(0),fiber:+(d[6]*f).toFixed(1)};
+}
+function addFoodItem(){
+  if(!selFoodName){notify('⚠️ Select a food from the suggestions first');return;}
+  const qty=+N('fqty').value||100,unit=N('funit').value,meal=N('msel').value;
+  const grams=toG(qty,unit);
+  const item=makeItem(selFoodName,grams,FDB[selFoodName]);
+  MEALS[meal].items.push(item);renderMeals();
+  notify(`✅ ${selFoodName} added (${item.cal}kcal)`);
+  N('fsrch').value='';selFoodName=null;N('fprev').style.display='none';
+}
+function qAdd(name,grams){
+  const d=FDB[name];if(!d)return;
+  MEALS[N('msel').value].items.push(makeItem(name,grams,d));renderMeals();notify(`✅ ${name} added`);
+}
+function removeFood(meal,id){MEALS[meal].items=MEALS[meal].items.filter(i=>i.id!==id);renderMeals();}
+function clearMeals(){Object.keys(MEALS).forEach(k=>MEALS[k].items=[]);renderMeals();notify('🔄 Meal log cleared');}
+
+function mealTot(items){
+  return items.reduce(function(a,i){
+    return{cal:a.cal+i.cal,protein:a.protein+i.protein,iron:a.iron+i.iron,
+      calcium:a.calcium+i.calcium,vitC:a.vitC+i.vitC,folate:a.folate+i.folate,fiber:a.fiber+i.fiber};
+  },{cal:0,protein:0,iron:0,calcium:0,vitC:0,folate:0,fiber:0});
+}
+
+function renderMeals(){
+  const log=N('meallog');let allTot={cal:0,protein:0,iron:0,calcium:0,vitC:0,folate:0,fiber:0};let any=false;
+  log.innerHTML=Object.entries(MEALS).map(([key,meal])=>{
+    if(!meal.items.length)return'';
+    any=true;
+    const tot=mealTot(meal.items);
+    Object.keys(allTot).forEach(k=>allTot[k]+=tot[k]);
+    const rows=meal.items.map(item=>`
+      <div class="fi">
+        <div><div class="fi-n">${item.name}</div><div class="fi-d">${item.grams}g · 🥩${item.protein}g · 🩸${item.iron}mg · 🦴${item.calcium}mg calcium</div></div>
+        <div style="display:flex;align-items:center"><div class="fi-c">${item.cal}kcal</div><button class="fidel" onclick="removeFood('${key}',${item.id})">✕</button></div>
+      </div>`).join('');
+    return`<div class="card">
+      <div class="meal-hdr" onclick="this.nextElementSibling.classList.toggle('open')">
+        <div style="display:flex;align-items:center;gap:7px">
+          <span style="font-size:18px">${meal.icon}</span>
+          <div><div style="font-weight:700;font-size:13px;color:var(--text)">${meal.name}</div><div style="font-size:10.5px;color:var(--muted)">${meal.time} · ${meal.items.length} item${meal.items.length>1?'s':''}</div></div>
+        </div>
+        <span style="background:linear-gradient(135deg,var(--amber),#E07B2A);color:#fff;padding:3px 9px;border-radius:50px;font-size:10.5px;font-weight:700">${Math.round(tot.cal)} kcal</span>
+      </div>
+      <div class="meal-body open">${rows}</div>
+    </div>`;
+  }).join('');
+  const ntEl=N('ntot'),nbEl=N('nbcard'),clEl=N('clrbtn');
+  if(!any){ntEl.style.display='none';nbEl.style.display='none';clEl.style.display='none';return;}
+  ntEl.style.display='block';nbEl.style.display='block';clEl.style.display='block';
+  N('ntcal').innerHTML=`${Math.round(allTot.cal)} <small style="font-size:14px;opacity:.75">kcal</small>`;
+  N('ntpro').textContent=allTot.protein.toFixed(1)+'g';
+  N('ntir').textContent=allTot.iron.toFixed(1)+'mg';
+  N('ntca').textContent=Math.round(allTot.calcium)+'mg';
+  N('ntvc').textContent=allTot.vitC.toFixed(1)+'mg';
+  N('ntfo').textContent=Math.round(allTot.folate)+'mcg';
+  N('ntfi').textContent=allTot.fiber.toFixed(1)+'g';
+  // Nutrient bars
+  const dv=getDV(prof?prof.pregnant:'no');
+  const bkeys=['protein','iron','calcium','vitC','folate','fiber'];
+  N('nbbars').innerHTML=`
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Daily Reference: ${prof&&prof.pregnant==='yes'?'Pregnant':'Women'} · ${dv.cal} kcal goal</div>
+    ${bkeys.map(k=>{
+      const pct=Math.min(Math.round(allTot[k]/dv[k]*100),100);
+      return`<div class="nbr">
+        <div class="nbl"><span style="font-weight:600;color:var(--text)">${NNAMES[k]}</span><span style="color:var(--muted)">${allTot[k].toFixed(k==='calcium'||k==='folate'?0:1)} ${NUNITS[k]} / ${dv[k]} ${NUNITS[k]} (${pct}%)</span></div>
+        <div class="nbg"><div class="nbf" style="width:${pct}%;background:${NCLRS[k]}"></div></div>
+      </div>`;
+    }).join('')}`;
+}
+
+// ════════════════════════════════════════
+// AI FOOD LOOKUP (Claude API)
+// ════════════════════════════════════════
+async function aiLookup(){
+  const fname=N('cfname').value.trim();
+  if(!fname){notify('⚠️ Enter food name first');return;}
+  N('aiload').classList.add('show');N('cfres').innerHTML='';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:400,
+        messages:[{role:'user',content:`Nutritional data per 100g for "${fname}" (Indian food). Return ONLY a JSON object, nothing else: {"cal":number,"protein":number,"iron":number,"calcium":number,"vitC":number,"folate":number,"fiber":number}`}]
+      })
+    });
+    const data=await res.json();
+    const txt=data.content.find(c=>c.type==='text').text.trim().replace(/```json|```/g,'').trim();
+    const nt=JSON.parse(txt);
+    window._cfData={name:fname,nt};
+    N('cfres').innerHTML=`<div class="rb safe mt">
+      <b>✅ Found: ${fname} (per 100g)</b>
+      🔥 ${nt.cal} kcal · 🥩 ${nt.protein}g protein · 🩸 ${nt.iron}mg iron<br>
+      🦴 ${nt.calcium}mg calcium · 🍊 ${nt.vitC}mg Vit C · 🟢 ${nt.folate}mcg folate · 🌾 ${nt.fiber}g fiber
+      <div class="row" style="margin-top:10px;gap:8px">
+        <input type="number" id="cfqty" placeholder="Quantity (g)" style="margin:0" value="100" />
+        <button class="btn amr sm" onclick="addAIFood()" style="margin:0">+ Add to Meal</button>
+      </div>
+    </div>`;
+  }catch(e){
+    N('cfres').innerHTML=`<div class="rb warn mt">
+      <b>⚠️ AI search unavailable in this browser</b>
+      Enter nutrition manually below (values per 100g):
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px">
+        <input type="number" placeholder="Calories (kcal)" id="mc0" style="margin:0"/>
+        <input type="number" placeholder="Protein (g)" id="mc1" style="margin:0"/>
+        <input type="number" placeholder="Iron (mg)" id="mc2" style="margin:0"/>
+        <input type="number" placeholder="Calcium (mg)" id="mc3" style="margin:0"/>
+        <input type="number" placeholder="Vit C (mg)" id="mc4" style="margin:0"/>
+        <input type="number" placeholder="Folate (mcg)" id="mc5" style="margin:0"/>
+        <input type="number" placeholder="Fiber (g)" id="mc6" style="margin:0"/>
+        <input type="number" placeholder="Quantity (g)" id="mc7" style="margin:0" value="100"/>
+      </div>
+      <button class="btn amr mt" onclick="addManualFood()">Add to Meal</button>
+    </div>`;
+  } finally {
+    N('aiload').classList.remove('show');
+  }
+}
+function addAIFood(){
+  const d=window._cfData;if(!d)return;
+  const qty=+N('cfqty').value||100,meal=N('msel').value,f=qty/100;
+  const item={id:Date.now(),name:d.name,qty,unit:'g',grams:qty,
+    cal:+(d.nt.cal*f).toFixed(1),protein:+(d.nt.protein*f).toFixed(1),
+    iron:+(d.nt.iron*f).toFixed(2),calcium:+(d.nt.calcium*f).toFixed(0),
+    vitC:+(d.nt.vitC*f).toFixed(1),folate:+(d.nt.folate*f).toFixed(0),fiber:+(d.nt.fiber*f).toFixed(1)};
+  MEALS[meal].items.push(item);renderMeals();notify(`✅ ${d.name} added (${item.cal}kcal)`);
+}
+function addManualFood(){
+  const fname=N('cfname').value.trim()||'Custom Food',meal=N('msel').value;
+  const v=[0,1,2,3,4,5,6].map(i=>+N('mc'+i).value||0);
+  const qty=+N('mc7').value||100,f=qty/100;
+  const item={id:Date.now(),name:fname,qty,unit:'g',grams:qty,
+    cal:+(v[0]*f).toFixed(1),protein:+(v[1]*f).toFixed(1),iron:+(v[2]*f).toFixed(2),
+    calcium:+(v[3]*f).toFixed(0),vitC:+(v[4]*f).toFixed(1),folate:+(v[5]*f).toFixed(0),fiber:+(v[6]*f).toFixed(1)};
+  MEALS[meal].items.push(item);renderMeals();notify(`✅ ${fname} added`);
+}
+
+// Close food suggestions on outside click
+document.addEventListener('click',e=>{if(!e.target.closest('.fsw'))N('fsugg').style.display='none';});
+</script>
+</body>
+</html>
