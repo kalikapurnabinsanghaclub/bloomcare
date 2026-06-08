@@ -825,22 +825,32 @@ function showAuthError(msg) {
 }
 
 async function doLogin() {
-  showAuthError('');
-  const email = N('auth-email').value.trim();
-  const password = N('auth-password').value;
-  if (!email || !password) { showAuthError('⚠️ Enter email and password'); return; }
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) showAuthError('❌ ' + error.message);
+  try {
+    showAuthError('');
+    const email = N('auth-email').value.trim();
+    const password = N('auth-password').value;
+    if (!email || !password) { showAuthError('⚠️ Enter email and password'); return; }
+    if(!window.supabase) throw new Error('Supabase library failed to load');
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+  } catch(e) {
+    showAuthError('❌ ' + (e.message || String(e)));
+  }
 }
 
 async function doSignup() {
-  showAuthError('');
-  const email = N('auth-email').value.trim();
-  const password = N('auth-password').value;
-  if (!email || !password) { showAuthError('⚠️ Enter email and password'); return; }
-  const { error } = await supabase.auth.signUp({ email, password });
-  if (error) { showAuthError('❌ ' + error.message); } 
-  else { showAuthError('✅ Account created! You may need to check your email for a confirmation link before logging in.'); }
+  try {
+    showAuthError('');
+    const email = N('auth-email').value.trim();
+    const password = N('auth-password').value;
+    if (!email || !password) { showAuthError('⚠️ Enter email and password'); return; }
+    if(!window.supabase) throw new Error('Supabase library failed to load');
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) throw error;
+    showAuthError('✅ Account created! Check your email to confirm, then sign in.');
+  } catch(e) {
+    showAuthError('❌ ' + (e.message || String(e)));
+  }
 }
 
 async function doGoogleLogin() {
