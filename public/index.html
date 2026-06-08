@@ -168,6 +168,10 @@ textarea{resize:vertical;min-height:60px;}
 
 /* ── Notif bar ── */
 #notif{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);background:var(--plum);color:#fff;padding:9px 20px;border-radius:50px;font-size:12.5px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.22);display:none;z-index:999;white-space:nowrap;}
+/* Hide Google Translate Banner and Tooltips aggressively */
+.goog-te-banner-frame, .VIpgJd-ZVi9od-ORHb-OEVmcd, .skiptranslate > iframe, #goog-gt-tt { display: none !important; visibility: hidden !important; }
+body { top: 0 !important; position: static !important; }
+.goog-text-highlight { background-color: transparent !important; box-shadow: none !important; }
 </style>
 </head>
 <body>
@@ -238,8 +242,18 @@ textarea{resize:vertical;min-height:60px;}
 <div class="sec active" id="profile">
   <div class="card">
     <div class="ct">👤 My Health Profile</div>
+    <div style="margin-bottom:12px;background:var(--card);padding:10px;border-radius:12px;border:1px solid var(--border)">
+      <label style="margin-bottom:6px">🌐 App Language</label>
+      <select id="langSel" onchange="doTranslate(this.value)" style="margin:0">
+        <option value="en">English</option>
+        <option value="bn">বাংলা (Bengali)</option>
+        <option value="hi">हिन्दी (Hindi)</option>
+      </select>
+      <div id="google_translate_element" style="display:none;"></div>
+    </div>
     <div id="pview"></div>
     <button class="btn sec mt" onclick="editProf()">✏️ Edit Profile</button>
+    <button class="btn mt" style="background:#E8608A;color:white;margin-top:8px" onclick="logout()">🚪 Logout</button>
   </div>
   <div class="card">
     <div class="ct">📊 BMI Analysis</div>
@@ -436,7 +450,7 @@ textarea{resize:vertical;min-height:60px;}
     </div>
     <div id="fprev" style="display:none;margin-top:8px"></div>
     <div class="row mt">
-      <div><label>Quantity</label><input type="number" id="fqty" placeholder="100" style="margin-bottom:0" /></div>
+      <div><label>Quantity</label><input type="number" id="fqty" placeholder="100" style="margin-bottom:0" oninput="updPreview()" /></div>
       <div><label>Unit</label>
         <select id="funit" style="margin-bottom:0" onchange="updUnit()">
           <option value="g">grams (g)</option>
@@ -452,40 +466,7 @@ textarea{resize:vertical;min-height:60px;}
     <button class="btn amr mt" onclick="addFoodItem()">🔥 Add to Meal Log</button>
   </div>
 
-  <div class="card">
-    <div class="ct">⚡ Quick Add Popular Foods</div>
-    <div style="display:flex;flex-wrap:wrap;gap:6px">
-      <button class="btn sec xs" onclick="qAdd('Rice (cooked)',150)">🍚 Rice</button>
-      <button class="btn sec xs" onclick="qAdd('Chapati/Roti',40)">🫓 Roti</button>
-      <button class="btn sec xs" onclick="qAdd('Dal (toor cooked)',150)">🫘 Dal</button>
-      <button class="btn sec xs" onclick="qAdd('Idli',120)">🍡 Idli</button>
-      <button class="btn sec xs" onclick="qAdd('Dosa',100)">🥞 Dosa</button>
-      <button class="btn sec xs" onclick="qAdd('Egg (whole)',55)">🥚 Egg</button>
-      <button class="btn sec xs" onclick="qAdd('Paneer',80)">🧀 Paneer</button>
-      <button class="btn sec xs" onclick="qAdd('Chicken (breast cooked)',100)">🍗 Chicken</button>
-      <button class="btn sec xs" onclick="qAdd('Rohu Fish (cooked)',100)">🐟 Fish</button>
-      <button class="btn sec xs" onclick="qAdd('Milk (full fat)',200)">🥛 Milk</button>
-      <button class="btn sec xs" onclick="qAdd('Curd/Yogurt',100)">🍶 Curd</button>
-      <button class="btn sec xs" onclick="qAdd('Banana',120)">🍌 Banana</button>
-      <button class="btn sec xs" onclick="qAdd('Apple',150)">🍎 Apple</button>
-      <button class="btn sec xs" onclick="qAdd('Mango',150)">🥭 Mango</button>
-      <button class="btn sec xs" onclick="qAdd('Almonds',28)">🌰 Almonds</button>
-      <button class="btn sec xs" onclick="qAdd('Spinach (palak)',100)">🥬 Palak</button>
-      <button class="btn sec xs" onclick="qAdd('Gulab Jamun',60)">🍮 Gulab Jamun</button>
-      <button class="btn sec xs" onclick="qAdd('Ice Cream (vanilla)',80)">🍦 Ice Cream</button>
-      <button class="btn sec xs" onclick="qAdd('Samosa',60)">🥟 Samosa</button>
-      <button class="btn sec xs" onclick="qAdd('Dates',30)">🫘 Dates</button>
-    </div>
-  </div>
 
-  <div class="card">
-    <div class="ct">🤖 Custom Food — AI Lookup</div>
-    <p class="hint">Food not in the list? AI will search and fill in the nutritional data for you.</p>
-    <input type="text" id="cfname" placeholder="e.g. Khandvi, Modak, Pesarattu, Sandesh..." />
-    <button class="btn sec" onclick="aiLookup()">🤖 Search Nutrition with AI</button>
-    <div class="ai-load" id="aiload"><span class="spin"></span>AI is searching nutritional data...</div>
-    <div id="cfres"></div>
-  </div>
 
   <div id="meallog"></div>
 
@@ -512,6 +493,10 @@ textarea{resize:vertical;min-height:60px;}
 
 </div><!-- /app -->
 <div id="notif"></div>
+
+<!-- Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-client.js"></script>
 
 <script>
 // ════════════════════════════════════════
@@ -667,7 +652,56 @@ const FDB = {
   "Vegetable Pulao":[170,4,1,25,8,18,2],
   "Dhokla":[160,6,1,50,2,20,1],
   "Kachori":[385,7,2.2,25,0,20,2],
-  "Poori Bhaji":[300,5.5,2,30,10,25,2]
+  "Poori Bhaji":[300,5.5,2,30,10,25,2],
+  // ── WEST BENGAL & EASTERN INDIAN
+  "Macher Jhol (Fish Curry)":[130,14,1.2,50,4,10,0.5],
+  "Kosha Mangsho (Mutton)":[250,18,2.5,20,2,8,0.5],
+  "Shukto (Mixed Veg Bitter)":[90,2.5,1.5,40,20,30,4],
+  "Chholar Dal (Bengal Gram)":[180,8,2.5,45,2,90,5],
+  "Luchi (Puri)":[320,6,2,15,0,20,1.5],
+  "Alur Dom (Potato Curry)":[110,2,0.8,15,10,12,2],
+  "Begun Bhaja (Fried Eggplant)":[220,1.5,0.5,12,5,15,3],
+  "Ilish Bhapa (Steamed Hilsa)":[290,19,1.2,120,0,10,0],
+  "Chingri Malai Curry":[210,16,1,80,2,15,0.5],
+  "Moong Dal (Roasted/Bhaja)":[120,7,1.5,30,1,65,4],
+  "Muri (Puffed Rice)":[380,6,3,10,0,5,1],
+  "Mishti Doi":[140,4,0.1,120,0,8,0],
+  "Rosogolla":[280,4,0.5,100,0,5,0],
+  "Sandesh":[350,12,0.5,250,0,8,0],
+  "Patal (Parwal)":[24,2,0.5,20,29,15,3],
+  "Jhinge (Ridge Gourd)":[17,0.5,0.4,18,12,12,3],
+  "Kochu (Taro Root)":[112,1.5,0.8,43,11,22,4],
+  "Data (Drumstick)":[64,9.4,4,185,51,40,2]
+};
+
+const ALIAS_DB = {
+  // Bengali terms
+  "ভাত": "Rice (cooked)", "bhat": "Rice (cooked)",
+  "ডাল": "Dal (toor cooked)", "dhal": "Dal (toor cooked)", "daal": "Dal (toor cooked)",
+  "মাছ": "Rohu Fish (cooked)", "mach": "Rohu Fish (cooked)", "maach": "Rohu Fish (cooked)",
+  "মাংস": "Chicken (breast cooked)", "mangsho": "Chicken (breast cooked)", "gosht": "Mutton (cooked)",
+  "মুরগি": "Chicken (breast cooked)", "murgi": "Chicken (breast cooked)",
+  "ডিম": "Egg (whole)", "dim": "Egg (whole)",
+  "আলু": "Potato", "aloo": "Potato",
+  "দুধ": "Milk (full fat)", "dudh": "Milk (full fat)",
+  "মিষ্টি দই": "Mishti Doi", "doi": "Curd/Yogurt",
+  "রুটি": "Chapati/Roti", "ruti": "Chapati/Roti",
+  "লুচি": "Luchi (Puri)", "luchi": "Luchi (Puri)",
+  "মুড়ি": "Muri (Puffed Rice)", "muri": "Muri (Puffed Rice)",
+  "ইলিশ": "Hilsa / Ilish Fish", "ilish": "Hilsa / Ilish Fish",
+  "পটল": "Patal (Parwal)", "potol": "Patal (Parwal)",
+  "ঝিঙ্গে": "Jhinge (Ridge Gourd)", "jhinge": "Jhinge (Ridge Gourd)",
+  "কচু": "Kochu (Taro Root)", "kochu": "Kochu (Taro Root)",
+  "বেগুন": "Brinjal/Eggplant", "begun": "Brinjal/Eggplant",
+  // Hindi terms
+  "चावल": "Rice (cooked)", "chawal": "Rice (cooked)",
+  "दाल": "Dal (toor cooked)",
+  "रोटी": "Chapati/Roti",
+  "मुर्गी": "Chicken (breast cooked)",
+  "अंडा": "Egg (whole)", "anda": "Egg (whole)",
+  "दूध": "Milk (full fat)",
+  "मछली": "Rohu Fish (cooked)", "machli": "Rohu Fish (cooked)",
+  "आलू": "Potato"
 };
 
 const NNAMES={cal:'Calories',protein:'Protein',iron:'Iron',calcium:'Calcium',vitC:'Vitamin C',folate:'Folate',fiber:'Fiber'};
@@ -754,11 +788,18 @@ function editProf(){
   }
   N('p-overlay').style.display='flex';
 }
+function logout(){
+  if(confirm('Are you sure you want to log out? All your local data will be cleared.')){
+    localStorage.clear();
+    location.reload();
+  }
+}
 function renderProf(){
   if(!prof)return;
   const pStat=prof.pregnant==='yes'?`🤰 Pregnant (${prof.weeks||'?'} wks)`:prof.pregnant==='plan'?'🌸 Planning to conceive':'👩 Not pregnant';
   N('hname').textContent=`Hello, ${prof.name.split(' ')[0]} 🌸`;
   N('hstatus').textContent=pStat;
+  if(N('ww')) N('ww').value = prof.weight;
   const bmi=(prof.weight/((prof.height/100)**2)).toFixed(1);
   let bc='',bb='',bc2='';
   if(bmi<18.5){bc='Underweight';bb='warn';bc2='#F4A742';}
@@ -810,12 +851,13 @@ function saveDoc(){
 }
 function handleRx(e){
   const file=e.target.files[0];if(!file)return;
+  const delBtn = `<button class="btn sm mt" style="background:#E8608A;color:white;margin-top:8px" onclick="N('rxout').innerHTML=''; N('rxf').value=''; notify('🗑️ Prescription removed');">🗑️ Delete</button>`;
   if(file.type.startsWith('image/')){
     const r=new FileReader();
-    r.onload=ev=>{N('rxout').innerHTML=`<div style="margin-top:10px"><div style="font-size:12px;color:var(--mint);font-weight:700;margin-bottom:5px">✅ Uploaded: ${file.name}</div><img src="${ev.target.result}" style="max-width:100%;border-radius:12px;border:1.5px solid var(--border)" /></div>`;};
+    r.onload=ev=>{N('rxout').innerHTML=`<div style="margin-top:10px"><div style="font-size:12px;color:var(--mint);font-weight:700;margin-bottom:5px">✅ Uploaded: ${file.name}</div><img src="${ev.target.result}" style="max-width:100%;border-radius:12px;border:1.5px solid var(--border)" /><br>${delBtn}</div>`;};
     r.readAsDataURL(file);
   } else {
-    N('rxout').innerHTML=`<div class="rb safe mt"><b>✅ File Uploaded</b>${file.name} · ${(file.size/1024).toFixed(1)} KB</div>`;
+    N('rxout').innerHTML=`<div class="rb safe mt"><b>✅ File Uploaded</b>${file.name} · ${(file.size/1024).toFixed(1)} KB<br>${delBtn}</div>`;
   }
   notify('📋 Prescription uploaded!');
 }
@@ -1003,17 +1045,24 @@ function doFSearch(){
 }
 function selFood(name){
   selFoodName=name;N('fsrch').value=name;N('fsugg').style.display='none';
-  const d=FDB[name];
+  updPreview();
+}
+function updPreview(){
+  if(!selFoodName) return;
+  const d=FDB[selFoodName];
+  if(!d) return;
+  const qty=+N('fqty').value||0, unit=N('funit').value, grams=toG(qty,unit), f=grams/100;
   N('fprev').innerHTML=`<div class="rb info">
-    <b>📊 ${name} — per 100g</b>
-    🔥 ${d[0]} kcal &nbsp;·&nbsp; 🥩 ${d[1]}g protein &nbsp;·&nbsp; 🩸 ${d[2]}mg iron<br>
-    🦴 ${d[3]}mg calcium &nbsp;·&nbsp; 🍊 ${d[4]}mg Vit C &nbsp;·&nbsp; 🟢 ${d[5]}mcg folate &nbsp;·&nbsp; 🌾 ${d[6]}g fiber
+    <b>📊 ${selFoodName} — ${qty} ${unit} (${grams.toFixed(0)}g)</b>
+    🔥 ${(d[0]*f).toFixed(1)} kcal &nbsp;·&nbsp; 🥩 ${(d[1]*f).toFixed(1)}g protein &nbsp;·&nbsp; 🩸 ${(d[2]*f).toFixed(2)}mg iron<br>
+    🦴 ${(d[3]*f).toFixed(0)}mg calcium &nbsp;·&nbsp; 🍊 ${(d[4]*f).toFixed(1)}mg Vit C &nbsp;·&nbsp; 🟢 ${(d[5]*f).toFixed(0)}mcg folate &nbsp;·&nbsp; 🌾 ${(d[6]*f).toFixed(1)}g fiber
   </div>`;
   N('fprev').style.display='block';
 }
 function updUnit(){
   const defs={g:100,ml:200,piece:1,cup:1,tbsp:2,tsp:3,katori:1};
   N('fqty').value=defs[N('funit').value]||100;
+  updPreview();
 }
 function makeItem(name,grams,d){
   const f=grams/100;
@@ -1095,49 +1144,58 @@ function renderMeals(){
 // AI FOOD LOOKUP (Claude API)
 // ════════════════════════════════════════
 async function aiLookup(){
-  const fname=N('cfname').value.trim();
+  let fname=N('cfname').value.trim();
   if(!fname){notify('⚠️ Enter food name first');return;}
   N('aiload').classList.add('show');N('cfres').innerHTML='';
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',max_tokens:400,
-        messages:[{role:'user',content:`Nutritional data per 100g for "${fname}" (Indian food). Return ONLY a JSON object, nothing else: {"cal":number,"protein":number,"iron":number,"calcium":number,"vitC":number,"folate":number,"fiber":number}`}]
-      })
-    });
-    const data=await res.json();
-    const txt=data.content.find(c=>c.type==='text').text.trim().replace(/```json|```/g,'').trim();
-    const nt=JSON.parse(txt);
-    window._cfData={name:fname,nt};
-    N('cfres').innerHTML=`<div class="rb safe mt">
-      <b>✅ Found: ${fname} (per 100g)</b>
-      🔥 ${nt.cal} kcal · 🥩 ${nt.protein}g protein · 🩸 ${nt.iron}mg iron<br>
-      🦴 ${nt.calcium}mg calcium · 🍊 ${nt.vitC}mg Vit C · 🟢 ${nt.folate}mcg folate · 🌾 ${nt.fiber}g fiber
-      <div class="row" style="margin-top:10px;gap:8px">
-        <input type="number" id="cfqty" placeholder="Quantity (g)" style="margin:0" value="100" />
-        <button class="btn amr sm" onclick="addAIFood()" style="margin:0">+ Add to Meal</button>
-      </div>
-    </div>`;
-  }catch(e){
-    N('cfres').innerHTML=`<div class="rb warn mt">
-      <b>⚠️ AI search unavailable in this browser</b>
-      Enter nutrition manually below (values per 100g):
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px">
-        <input type="number" placeholder="Calories (kcal)" id="mc0" style="margin:0"/>
-        <input type="number" placeholder="Protein (g)" id="mc1" style="margin:0"/>
-        <input type="number" placeholder="Iron (mg)" id="mc2" style="margin:0"/>
-        <input type="number" placeholder="Calcium (mg)" id="mc3" style="margin:0"/>
-        <input type="number" placeholder="Vit C (mg)" id="mc4" style="margin:0"/>
-        <input type="number" placeholder="Folate (mcg)" id="mc5" style="margin:0"/>
-        <input type="number" placeholder="Fiber (g)" id="mc6" style="margin:0"/>
-        <input type="number" placeholder="Quantity (g)" id="mc7" style="margin:0" value="100"/>
-      </div>
-      <button class="btn amr mt" onclick="addManualFood()">Add to Meal</button>
-    </div>`;
-  } finally {
+  
+  setTimeout(() => {
+    let lower = fname.toLowerCase();
+    let mappedName = ALIAS_DB[lower] || ALIAS_DB[fname] || fname;
+    let d = FDB[mappedName];
+
+    // Fuzzy fallback
+    if (!d) {
+      for (let k in FDB) {
+        if (k.toLowerCase().includes(lower) || lower.includes(k.toLowerCase())) {
+          mappedName = k;
+          d = FDB[k];
+          break;
+        }
+      }
+    }
+
     N('aiload').classList.remove('show');
-  }
+    
+    if (d) {
+      const nt = {cal: d[0], protein: d[1], iron: d[2], calcium: d[3], vitC: d[4], folate: d[5], fiber: d[6]};
+      window._cfData={name:mappedName,nt};
+      N('cfres').innerHTML=`<div class="rb safe mt">
+        <b>✅ Found: ${mappedName} (per 100g)</b>
+        🔥 ${nt.cal} kcal · 🥩 ${nt.protein}g protein · 🩸 ${nt.iron}mg iron<br>
+        🦴 ${nt.calcium}mg calcium · 🍊 ${nt.vitC}mg Vit C · 🟢 ${nt.folate}mcg folate · 🌾 ${nt.fiber}g fiber
+        <div class="row" style="margin-top:10px;gap:8px">
+          <input type="number" id="cfqty" placeholder="Quantity (g)" style="margin:0" value="100" />
+          <button class="btn amr sm" onclick="addAIFood()" style="margin:0">+ Add to Meal</button>
+        </div>
+      </div>`;
+    } else {
+      N('cfres').innerHTML=`<div class="rb warn mt">
+        <b>⚠️ Food not recognized automatically</b>
+        Enter nutrition manually below (values per 100g):
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px">
+          <input type="number" placeholder="Calories (kcal)" id="mc0" style="margin:0"/>
+          <input type="number" placeholder="Protein (g)" id="mc1" style="margin:0"/>
+          <input type="number" placeholder="Iron (mg)" id="mc2" style="margin:0"/>
+          <input type="number" placeholder="Calcium (mg)" id="mc3" style="margin:0"/>
+          <input type="number" placeholder="Vit C (mg)" id="mc4" style="margin:0"/>
+          <input type="number" placeholder="Folate (mcg)" id="mc5" style="margin:0"/>
+          <input type="number" placeholder="Fiber (g)" id="mc6" style="margin:0"/>
+          <input type="number" placeholder="Quantity (g)" id="mc7" style="margin:0" value="100"/>
+        </div>
+        <button class="btn amr mt" onclick="addManualFood()">Add to Meal</button>
+      </div>`;
+    }
+  }, 400); // 400ms fake delay to simulate processing
 }
 function addAIFood(){
   const d=window._cfData;if(!d)return;
@@ -1161,5 +1219,18 @@ function addManualFood(){
 // Close food suggestions on outside click
 document.addEventListener('click',e=>{if(!e.target.closest('.fsw'))N('fsugg').style.display='none';});
 </script>
+<!-- Google Translate -->
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'en,bn,hi', autoDisplay: false}, 'google_translate_element');
+}
+function doTranslate(lang) {
+  var combo = document.querySelector('.goog-te-combo');
+  if(!combo) { setTimeout(()=>doTranslate(lang), 500); return; }
+  combo.value = lang;
+  combo.dispatchEvent(new Event('change'));
+}
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
