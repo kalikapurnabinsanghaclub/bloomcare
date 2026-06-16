@@ -808,9 +808,16 @@ function getDV(preg){
 // ════════════════════════════════════════
 // SUPABASE SYNC (Offline-First)
 // ════════════════════════════════════════
-const supabaseUrl = 'https://qujumsijaetmftmmwjms.supabase.co';
-const supabaseKey = 'sb_publishable_8BEEsWOxKGLbB18K6wlgjg_11o1uDfh';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = 'https://cpycuqwwrymzxejcmgfe.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNweWN1cXd3cnltenhlamNtZ2ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwOTc0MjcsImV4cCI6MjA5NTY3MzQyN30.DUKDM7GAL1yWBvkkHRPPcjrdxb6uZZApD-OWtnGdBdA';
+let supabaseClient = null;
+try {
+  if (window.supabase) {
+    supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+  }
+} catch (err) {
+  console.error("Supabase initialization failed", err);
+}
 
 let sessionUser = null;
 
@@ -824,42 +831,59 @@ function showAuthError(msg) {
 async function doLogin() {
   try {
     showAuthError('');
+    if(!supabaseClient) { alert('Application failed to load properly. Please disable your adblocker or check your internet connection.'); return; }
     const email = N('auth-email').value.trim();
     const password = N('auth-password').value;
-    if (!email || !password) { showAuthError('⚠️ Enter email and password'); return; }
-    if(!window.supabase) throw new Error('Supabase library failed to load');
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (!email || !password) { showAuthError('⚠️ Enter email and password'); alert('Please enter both your email and password in the fields above!'); return; }
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if (error) throw error;
+    if (data?.session) {
+      alert("Logged in successfully!");
+    }
   } catch(e) {
     showAuthError('❌ ' + (e.message || String(e)));
+    alert('Login Failed: ' + (e.message || String(e)));
   }
 }
 
 async function doSignup() {
   try {
     showAuthError('');
+    if(!supabaseClient) { alert('Application failed to load properly. Please disable your adblocker or check your internet connection.'); return; }
     const email = N('auth-email').value.trim();
     const password = N('auth-password').value;
-    if (!email || !password) { showAuthError('⚠️ Enter email and password'); return; }
-    if(!window.supabase) throw new Error('Supabase library failed to load');
-    const { error } = await supabase.auth.signUp({ email, password });
+    if (!email || !password) { showAuthError('⚠️ Enter email and password'); alert('Please enter an email and password in the fields above to create an account!'); return; }
+    const { data, error } = await supabaseClient.auth.signUp({ email, password });
     if (error) throw error;
-    showAuthError('✅ Account created! Check your email to confirm, then sign in.');
+    
+    if (data?.session) {
+      alert("Account created and logged in successfully!");
+    } else {
+      showAuthError('✅ Account created! Check your email to confirm, then sign in.');
+      alert("Signup successful! IMPORTANT: You must check your email inbox and click the confirmation link before you can log in.");
+    }
   } catch(e) {
     showAuthError('❌ ' + (e.message || String(e)));
+    alert('Signup Failed: ' + (e.message || String(e)));
   }
 }
 
 async function doGoogleLogin() {
-  showAuthError('');
-  const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
-  if (error) showAuthError('❌ ' + error.message);
+  try {
+    showAuthError('');
+    if(!supabaseClient) { alert('Application failed to load properly. Please disable your adblocker or check your internet connection.'); return; }
+    const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google' });
+    if (error) showAuthError('❌ ' + error.message);
+  } catch(e) {
+    showAuthError('❌ ' + (e.message || String(e)));
+    alert('Google Login Failed: ' + (e.message || String(e)));
+  }
 }
 
 // Sync from Supabase on load
 async function syncFromSupabase() {
   if (!sessionUser) return;
-  const { data: p } = await supabase.from('profiles').select('*').eq('id', sessionUser.id).single();
+  const { data: p } = await supabaseClient.from('profiles').select('*').eq('id', sessionUser.id).single();
   if (p) {
     const localP = {name: p.name, age: p.age, weight: p.weight, height: p.height, blood: p.blood_group, pregnant: p.pregnant_status, weeks: p.pregnant_weeks};
     localStorage.setItem('bc_prof', JSON.stringify(localP));
@@ -870,7 +894,7 @@ async function syncFromSupabase() {
 // Sync Profile to Supabase
 async function syncProfileToSupabase() {
   if (!prof || !sessionUser) return;
-  await supabase.from('profiles').upsert({
+  await supabaseClient.from('profiles').upsert({
     id: sessionUser.id,
     name: prof.name,
     age: prof.age,
@@ -887,7 +911,7 @@ async function syncDataToSupabase() {
   if (!prof || !sessionUser) return;
   const td = new Date().toISOString().split('T')[0];
   
-  await supabase.from('water_logs').upsert({
+  await supabaseClient.from('water_logs').upsert({
     user_id: sessionUser.id,
     date: td,
     current_ml: typeof wMl !== 'undefined' ? wMl : 0,
@@ -896,7 +920,7 @@ async function syncDataToSupabase() {
 
   for (const key of Object.keys(MEALS)) {
     if(MEALS[key].items.length > 0) {
-      await supabase.from('meal_logs').upsert({
+      await supabaseClient.from('meal_logs').upsert({
         user_id: sessionUser.id,
         date: td,
         meal_type: MEALS[key].name,
@@ -933,7 +957,7 @@ window.onload=async ()=>{
   N('hdate').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',month:'long',day:'numeric'});
   
   // Listen for auth changes
-  supabase.auth.onAuthStateChange(async (event, session) => {
+  supabaseClient.auth.onAuthStateChange(async (event, session) => {
     sessionUser = session?.user || null;
     
     if (sessionUser) {
@@ -1008,7 +1032,7 @@ function editProf(){
 }
 async function logout(){
   if(confirm('Are you sure you want to log out?')){
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     localStorage.clear();
     location.reload();
   }
