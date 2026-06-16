@@ -193,7 +193,10 @@ body { top: 0 !important; position: static !important; }
       <div id="auth-error-login" style="color:#d32f2f;font-size:13px;margin-bottom:10px;font-weight:600;display:none;"></div>
       <label>Email *</label>
       <input type="email" id="login-email" placeholder="you@example.com" />
-      <label>Password *</label>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <label>Password *</label>
+        <a href="#" onclick="toggleAuthView('reset')" style="font-size:11px;color:var(--rose);text-decoration:none;">Forgot Password?</a>
+      </div>
       <input type="password" id="login-password" placeholder="••••••••" />
       <button class="btn" onclick="doLogin()" style="margin-top:10px">Sign In</button>
       
@@ -218,6 +221,26 @@ body { top: 0 !important; position: static !important; }
       <button class="btn" onclick="doSignup()" style="margin-top:10px">Create Account</button>
 
       <p style="font-size:13px; margin-top:15px">Already have an account? <a href="#" onclick="toggleAuthView('login')" style="color:var(--rose);text-decoration:none;font-weight:600">Log In</a></p>
+    </div>
+
+    <!-- RESET PASSWORD VIEW -->
+    <div id="reset-view" style="display:none">
+      <p>Reset your password</p>
+      <div id="auth-error-reset" style="color:#d32f2f;font-size:13px;margin-bottom:10px;font-weight:600;display:none;"></div>
+      <label>Email *</label>
+      <input type="email" id="reset-email" placeholder="you@example.com" />
+      <button class="btn" onclick="doResetPassword()" style="margin-top:10px">Send Reset Link</button>
+
+      <p style="font-size:13px; margin-top:15px">Remembered your password? <a href="#" onclick="toggleAuthView('login')" style="color:var(--rose);text-decoration:none;font-weight:600">Log In</a></p>
+    </div>
+
+    <!-- UPDATE PASSWORD VIEW (After clicking email link) -->
+    <div id="update-pw-view" style="display:none">
+      <p>Set your new password</p>
+      <div id="auth-error-updatepw" style="color:#d32f2f;font-size:13px;margin-bottom:10px;font-weight:600;display:none;"></div>
+      <label>New Password *</label>
+      <input type="password" id="new-password" placeholder="••••••••" />
+      <button class="btn" onclick="doUpdatePassword()" style="margin-top:10px">Save New Password</button>
     </div>
 
   </div>
@@ -843,14 +866,24 @@ let sessionUser = null;
 
 // Auth Functions
 function toggleAuthView(view) {
+  const views = ['login-view', 'signup-view', 'reset-view', 'update-pw-view'];
+  views.forEach(v => {
+    const el = N(v);
+    if(el) el.style.display = 'none';
+  });
+  
   if (view === 'login') {
     N('login-view').style.display = 'block';
-    N('signup-view').style.display = 'none';
     N('auth-title').textContent = 'Welcome Back';
-  } else {
-    N('login-view').style.display = 'none';
+  } else if (view === 'signup') {
     N('signup-view').style.display = 'block';
     N('auth-title').textContent = 'Create Account';
+  } else if (view === 'reset') {
+    N('reset-view').style.display = 'block';
+    N('auth-title').textContent = 'Forgot Password';
+  } else if (view === 'update-pw') {
+    N('update-pw-view').style.display = 'block';
+    N('auth-title').textContent = 'New Password';
   }
 }
 
@@ -910,6 +943,42 @@ async function doGoogleLogin() {
   } catch(e) {
     showAuthError('❌ ' + (e.message || String(e)), 'login');
     alert('Google Login Failed: ' + (e.message || String(e)));
+  }
+}
+
+async function doResetPassword() {
+  try {
+    showAuthError('', 'reset');
+    const email = N('reset-email').value.trim();
+    if (!email) { showAuthError('⚠️ Enter your email', 'reset'); return; }
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin,
+    });
+    if (error) throw error;
+    showAuthError('✅ Password reset email sent! Check your inbox.', 'reset');
+    N('auth-error-reset').style.color = '#2e7d32'; // Green success color
+    alert("Reset link sent! Please check your email.");
+  } catch(e) {
+    showAuthError('❌ ' + (e.message || String(e)), 'reset');
+    N('auth-error-reset').style.color = '#d32f2f';
+  }
+}
+
+async function doUpdatePassword() {
+  try {
+    showAuthError('', 'updatepw');
+    const newPassword = N('new-password').value;
+    if (!newPassword) { showAuthError('⚠️ Enter a new password', 'updatepw'); return; }
+    const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
+    if (error) throw error;
+    alert("Password updated successfully!");
+    N('auth-title').textContent = 'Welcome to BloomCare';
+    N('update-pw-view').style.display = 'none';
+    // Let the main auth state listener handle showing the app
+    N('app').style.display = 'block';
+    N('p-overlay').style.display = 'none';
+  } catch(e) {
+    showAuthError('❌ ' + (e.message || String(e)), 'updatepw');
   }
 }
 
@@ -995,9 +1064,16 @@ window.onload=async ()=>{
   
   // Listen for auth changes
   supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      N('p-overlay').style.display = 'flex';
+      N('auth-state').style.display = 'block';
+      toggleAuthView('update-pw');
+      return;
+    }
+    
     sessionUser = session?.user || null;
     
-    if (sessionUser) {
+    if (sessionUser && event !== 'PASSWORD_RECOVERY' && N('update-pw-view').style.display !== 'block') {
       N('auth-state').style.display='none';
       await syncFromSupabase();
       
