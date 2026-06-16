@@ -927,7 +927,7 @@ async function syncFromSupabase() {
 // Sync Profile to Supabase
 async function syncProfileToSupabase() {
   if (!prof || !sessionUser) return;
-  await supabaseClient.from('profiles').upsert({
+  const { error } = await supabaseClient.from('profiles').upsert({
     id: sessionUser.id,
     name: prof.name,
     age: prof.age,
@@ -937,6 +937,10 @@ async function syncProfileToSupabase() {
     pregnant_status: prof.pregnant,
     pregnant_weeks: prof.weeks
   });
+  if (error) {
+    console.error('Supabase profile sync error:', error);
+    alert('Warning: Profile saved locally, but failed to sync to server. Please ensure the "profiles" table is created in your Supabase database!');
+  }
 }
 
 // Background sync for Meals and Water
